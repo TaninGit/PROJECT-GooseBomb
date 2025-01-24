@@ -1,3 +1,3 @@
 # Design System of GooseBomb
 
-![DesignSystem](https://github.com/user-attachments/assets/4ed6d61f-0b53-4f0b-816c-52c65744b938)
+![DesignSystem](https://github.com/user-attachments/assets/4f77c0cc-4750-42b7-914d-937ca2e34ae9)
