@@ -12,7 +12,7 @@
 
 ## Tutorial
 
-![Image](https://github.com/user-attachments/assets/6a15a939-0838-483f-a68e-e82529d7b5ed)
+![Image](https://github.com/user-attachments/assets/57e7bd8d-d861-4277-a500-f1cde144a05a)
 
 ## Play
 
@@ -20,7 +20,7 @@
 
 ## Pause pop-up
 
-![Image](https://github.com/user-attachments/assets/f24e62ba-5ba3-44c4-9f05-4f7b7f8bc10f)
+![Image](https://github.com/user-attachments/assets/e74a2b8b-e9e6-4aa2-86f3-b05a16063c6a)
 
 ## Result - win
 
