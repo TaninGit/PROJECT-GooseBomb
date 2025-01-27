@@ -38,14 +38,27 @@ function setBombs() {
   
 }
 
+function startGame() {
+  setBombs();
+  // console log เอาไว้เช็คพิกัดระเบิดที่ได้จากการสุ่มจาก setBombs
+  console.log(bombLocation) 
+}
 
+function clickTile(event){
 
+}
+
+function setFlag(){
+
+}
 
 </script>
  
 <template>
 <div>
-
+  <div>
+    <h1 class="font-bold text-center text-4xl pt-10">Bomb Count : {{ bombCount }}</h1>
+  </div>
   <div class="w-[52rem] h-[29.25rem] m-auto mt-24">
     <div v-for="i in row" :key="i" class="flex"> <!-- เอาไว้วนลูปสร้าง row -->
         <div
@@ -60,7 +73,10 @@ function setBombs() {
         </div>
       </div>
   </div>
-
+  <div class="flex items-center justify-center pt-4">
+    <button class="border-2 border-red-500 p-5 rounded-2xl 
+    px-14 py-5 items-center" v-on:click="setFlag">🚩</button> <!-- setFlag function ตรงนี้-->  
+  </div>
 </div>
 
 </template>
