@@ -37,10 +37,28 @@ function setBombs() {
   }
   
 }
+
+function startGame() {
+  setBombs();
+  // console log เอาไว้เช็คพิกัดระเบิดที่ได้จากการสุ่มจาก setBombs
+  console.log(bombLocation) 
+}
+
+function clickTile(event){
+
+}
+
+function setFlag(){
+
+}
+
 </script>
  
 <template>
 <div>
+  <div>
+    <h1 class="font-bold text-center text-4xl pt-10">Bomb Count : {{ bombCount }}</h1>
+  </div>
   <div class="w-[52rem] h-[29.25rem] m-auto mt-24">
     <div v-for="i in row" :key="i" class="flex"> <!-- เอาไว้วนลูปสร้าง row -->
         <div
@@ -48,11 +66,16 @@ function setBombs() {
         :key="`${i}-${j}`"
         :id="`${i}-${j}`"
         class="w-13 h-13 hover:bg-[#48bd7c]"
-        :class="(i + j) % 2 === 0 ? 'bg-[#88deb4]' : 'bg-[#5fc794]'"> <!-- เอาไว้สลับสีตาราง หลักการคู่คี่-->
-        <!-- cellLocation.push(`${i}-${j}`) อยากใส่ค่า i-j ใน array-->
-        </div> <!-- เอาไว้วานลูปสร้าง column -->
-        <!-- อยากใส่ค่า ["i-j"] แต่ละรอบใน board (board.push(cellLocation))-->
+        :class="(i + j) % 2 === 0 ? 'bg-[#88deb4]' : 'bg-[#5fc794]'"
+        :cellLocation.push(`${i}-${j}`) 
+        :board.push(cellLocation[i])
+        v-on:click="clickTile"> <!-- clickTile function ตรงนี้ -->  
+        </div>
       </div>
+  </div>
+  <div class="flex items-center justify-center pt-4">
+    <button class="border-2 border-red-500 p-5 rounded-2xl 
+    px-14 py-5 items-center" v-on:click="setFlag">🚩</button> <!-- setFlag function ตรงนี้-->  
   </div>
 </div>
 
