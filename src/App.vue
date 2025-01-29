@@ -1,9 +1,9 @@
 <script setup>
-import { ref } from "vue";
+import { ref, watchEffect } from "vue";
 
-const cellLocation = []; // เก็บพิกัดแต่ละช่อง เช่น "3-4","8-16"
-const board = []; // เก็บพิกัดช่องทั้งหมด เช่น [["3-4"], ["8-16"]]
-const bombLocation = [];
+const cellLocation = ref([]);
+const board = ref([]);
+const bombLocation = ref([]);
 
 const column = 16;
 const row = 9;
@@ -13,10 +13,8 @@ let cellClick = 0; // จำนวนกดพื้นที่ไม่ใช�
 let flagEnabled = false;
 let gameOver = false;
 
-window.onload = () => {
-  // ฟังก์ชัน startGame จะทำงานตอนหน้าเว็บโหลดเสร็จ
-  startGame();
-};
+const bgFlagBtn = ref("bg-red-100");
+
 
 function setBombs() {
   // เอาไว้ทดสอบ
@@ -30,10 +28,10 @@ function setBombs() {
   while (bombleft > 0) {
     let r = Math.floor(Math.random() * row) + 1;
     let c = Math.floor(Math.random() * column) + 1;
-    let location = `${r.toString()}-${c.toString()}`;
+    let location = `${r}-${c}`;
 
-    if (!bombLocation.includes(location)) {
-      bombLocation.push(location);
+    if (!bombLocation.value.includes(location)) {
+      bombLocation.value.push(location);
       bombleft -= 1;
     }
   }
@@ -41,21 +39,31 @@ function setBombs() {
 
 function startGame() {
   setBombs();
+  let newBoard = [];
+  let newCells = [];
+
   for (let r = 1; r <= row; r++) {
-    let row = [];
+    let rowArr = [];
     for (let c = 1; c <= column; c++) {
-      let tile = r.toString() + "-" + c.toString();
-      row.push(tile);
-      cellLocation.push(tile);
+      let tile = `${r}-${c}`;
+      rowArr.push(tile);
+      newCells.push(tile);
     }
-    board.push(row);
+    newBoard.push(rowArr);
   }
+
+  board.value = newBoard;
+  cellLocation.value = newCells;
 }
+
+watchEffect(() => {
+  if (cellLocation.value.length === 0) {
+    startGame();
+  }
+});
 
 function clickTile(event) {
 }
-
-const bgFlagBtn = ref("bg-red-100");
 
 function setFlag() {
   flagEnabled = !flagEnabled;
@@ -80,22 +88,20 @@ function setFlag() {
       class="w-13 h-13 hover:bg-[#48bd7c]"
       :class="[
         'w-13 h-13',
-        // สลับสีของแต่ละ tile
         (Math.floor(index / 16) + index % 16) % 2 === 0  
            ? 'bg-[#5fc794]'
            : 'bg-[#88deb7]' 
       ]"
       :id="`${cell}`"
       @click="clickTile"
-    ></div>
+      ></div>
   </div>
 
     <div class="flex items-center justify-center pt-4">
       <button
         class="border-2 border-red-500 p-5 rounded-2xl px-14 py-5 items-center"
         v-on:click="setFlag"
-        :class="bgFlagBtn"
-      >
+        :class="bgFlagBtn">
         🚩
       </button>
       <!-- setFlag function ตรงนี้-->
