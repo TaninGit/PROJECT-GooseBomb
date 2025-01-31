@@ -12,9 +12,8 @@ const column = 16;
 const row = 9;
 
 let bombCount = 35;
-let cellClick = 0; // จำนวนกดพื้นที่ไม่ใช่ระเบิด
 let flagEnabled = false;
-let gameOver = false;
+let gameOver = ref(false);
 
 const bgFlagBtn = ref("bg-red-100");
 
@@ -66,7 +65,7 @@ watchEffect(() => {
 });
 
 function clickTile(event) {
-  if (gameOver) return;
+  if (gameOver.value) return;
   
   const cell = event.target.id;
   
@@ -80,15 +79,14 @@ function clickTile(event) {
     return;
   }
 
-  
   if (bombLocation.value.includes(cell)) {
-    alert("Game Over! You hit a bomb.");
-    gameOver = true;
+    console.log(revealedCells.value);
+    console.log(revealedCells.value.length);
+    gameOver.value = true;
     return;
   }
-  
-  checkTile(cell);
 
+  checkTile(cell);
 }
 
 function checkTile(cell) {
@@ -126,8 +124,29 @@ function checkTile(cell) {
 
 function setFlag() {
   flagEnabled = !flagEnabled;
-  if (flagEnabled) bgFlagBtn.value = "bg-red-300";
-  else bgFlagBtn.value = "bg-red-100";
+  if (flagEnabled) 
+    bgFlagBtn.value = "bg-red-300";
+  else 
+    bgFlagBtn.value = "bg-red-100";
+}
+
+function getCellBackground(cell, index) {
+  const isEven = (Math.floor(index / 16) + index % 16) % 2 === 0;
+  if (revealedCells.value.includes(cell)) 
+    return isEven ? 'bg-[#74b6dc]' : 'bg-[#9cc3da]'
+  else
+    return isEven ? 'bg-[#5fc794]' : 'bg-[#88deb7]'
+}
+
+function getBombBackground(cell) {
+  if (gameOver.value) {
+    if (bombLocation.value.includes(cell) && flaggedCells.value.includes(cell)) 
+      return ''
+    else if (bombLocation.value.includes(cell)) 
+      return 'bg-red-600'
+    else if (flaggedCells.value.includes(cell)) 
+      return 'bg-red-600'
+  }
 }
 </script>
 
@@ -141,28 +160,24 @@ function setFlag() {
 
     <!-- grid-rows-9 grid-cols-16" สร้างตาราง 9 แถว 16 คอลั่มน์ -->
     <div class="w-[52rem] h-[29.25rem] m-auto mt-24 grid grid-rows-9 grid-cols-16">
-    <div
-      v-for="(cell, index) in cellLocation" 
-      :key="index"
-      class="w-13 h-13 hover:brightness-90"
-      :class="[
-        'w-13 h-13',
-        revealedCells.includes(cell)
-          ? (Math.floor(index / 16) + index % 16) % 2 === 0 
-            ? 'bg-[#74b6dc]'
-            : 'bg-[#9cc3da]'
-          : (Math.floor(index / 16) + index % 16) % 2 === 0  
-            ? 'bg-[#5fc794]'
-            : 'bg-[#88deb7]'
-        ]"
-      :id="`${cell}`"
-      @click="clickTile">
-      <span v-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
-        {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
-      </span>
-      <span v-if="flaggedCells.includes(cell)">🚩</span>
+      <div
+        v-for="(cell, index) in cellLocation" 
+        :key="index"
+        class="w-13 h-13 hover:brightness-90"
+        :class="[
+          'w-13 h-13',
+          getCellBackground(cell, index),
+          getBombBackground(cell)
+          ]"
+        :id="`${cell}`"
+        @click="clickTile">
+        <span v-if="flaggedCells.includes(cell)">🚩</span>
+        <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
+          {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
+        </span>
+        <span v-else-if="gameOver && bombLocation.includes(cell)">💣</span>
+      </div>
     </div>
-  </div>
 
     <div class="flex items-center justify-center pt-4">
       <button
@@ -171,9 +186,10 @@ function setFlag() {
         :class="bgFlagBtn">
         🚩
       </button>
-      <!-- setFlag function ตรงนี้-->
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
