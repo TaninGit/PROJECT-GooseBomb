@@ -8,22 +8,30 @@ const revealedCells = ref([]);
 const flaggedCells = ref([]);
 const cellNumbers = ref([]);
 
-const column = 16;
-const row = 9;
-
-let bombCount = 35;
 let flagEnabled = false;
 let gameOver = ref(false);
 
 const bgFlagBtn = ref("bg-red-100");
 
+const selectedLevel = ref("medium");
+const levels = {
+  easy: { row: 5, column: 8, bombCount: 10 },
+  medium: { row: 9, column: 16, bombCount: 35 },
+  hard: { row: 15, column: 25, bombCount: 75 },
+};
+
+const column = ref(levels[selectedLevel.value].column);
+const row = ref(levels[selectedLevel.value].row);
+
+let bombCount = ref(levels[selectedLevel.value].bombCount);
+
 
 function setBombs() {
 
-  let bombleft = bombCount;
+  let bombleft = bombCount.value;
   while (bombleft > 0) {
-    let r = Math.floor(Math.random() * row) + 1;
-    let c = Math.floor(Math.random() * column) + 1;
+    let r = Math.floor(Math.random() * row.value) + 1;
+    let c = Math.floor(Math.random() * column.value) + 1;
     let location = `${r}-${c}`;
 
     if (!bombLocation.value.includes(location)) {
@@ -38,9 +46,9 @@ function startGame() {
   let newBoard = [];
   let newCells = [];
 
-  for (let r = 1; r <= row; r++) {
+  for (let r = 1; r <= row.value; r++) {
     let rowArr = [];
-    for (let c = 1; c <= column; c++) {
+    for (let c = 1; c <= column.value; c++) {
       let tile = `${r}-${c}`;
       rowArr.push(tile);
       newCells.push(tile);
@@ -96,7 +104,7 @@ function checkTile(cell) {
       let nc = c + dc;
       let neighbor = `${nr}-${nc}`;
       
-      if (nr > 0 && nr <= row && nc > 0 && nc <= column) {
+      if (nr > 0 && nr <= row.value && nc > 0 && nc <= column.value) {
         neighbors.push(neighbor);
         if (bombLocation.value.includes(neighbor)) {
           bombAround++;
@@ -142,11 +150,29 @@ function getBombBackground(cell) {
   }
 }
 
-
 function checkWin() {
   if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length)
     alert('Congratulations! The well can now be built, free from any mess!')
   
+}
+
+function changeLevel(level) {
+  selectedLevel.value = level;
+  row.value = levels[level].row;
+  column.value = levels[level].column;
+  bombCount.value = levels[level].bombCount;
+  resetGame();
+}
+
+function resetGame() {
+  cellLocation.value = [];
+  board.value = [];
+  bombLocation.value = [];
+  revealedCells.value = [];
+  flaggedCells.value = [];
+  cellNumbers.value = [];
+  gameOver.value = false;
+  startGame();
 }
 
 </script>
@@ -158,15 +184,29 @@ function checkWin() {
         Bomb Count : {{ bombCount }}
       </h1>
     </div>
+    <div class="flex justify-center mt-5">
+      <select v-model="selectedLevel" @change="changeLevel(selectedLevel)" class="border-3 border-amber-800 p-2 text-xl font-bold">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
 
-    <!-- grid-rows-9 grid-cols-16" สร้างตาราง 9 แถว 16 คอลั่มน์ -->
-    <div class="w-[52rem] h-[29.25rem] m-auto mt-24 grid grid-rows-9 grid-cols-16">
+    <div class="w-[52rem] h-[29.25rem] m-auto mt-15" 
+      :style="{
+      display: 'grid',
+      gridTemplateColumns: `repeat(${column}, 1fr)`,
+      gridTemplateRows: `repeat(${row}, 1fr)`,
+      }">
       <div
         v-for="(cell, index) in cellLocation" 
         :key="index"
-        class="w-13 h-13 hover:brightness-90"
+        class="hover:brightness-90 flex items-center justify-center"
+        :style="{
+        width: '100%',
+        height: '100%'
+        }"
         :class="[
-          'w-13 h-13',
           getCellBackground(cell, index),
           getBombBackground(cell)
           ]"
