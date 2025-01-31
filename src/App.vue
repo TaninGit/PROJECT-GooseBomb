@@ -4,6 +4,9 @@ import { ref, watchEffect } from "vue";
 const cellLocation = ref([]);
 const board = ref([]);
 const bombLocation = ref([]);
+const revealedCells = ref([]);
+const flaggedCells = ref([]);
+const cellNumbers = ref([]);
 
 const column = 16;
 const row = 9;
@@ -63,6 +66,62 @@ watchEffect(() => {
 });
 
 function clickTile(event) {
+  if (gameOver) return;
+  
+  const cell = event.target.id;
+  
+  if (flagEnabled) {
+    const index = flaggedCells.value.indexOf(cell);
+    if (index !== -1) {
+      flaggedCells.value.splice(index, 1);
+    } else {
+      flaggedCells.value.push(cell);
+    }
+    return;
+  }
+
+  
+  if (bombLocation.value.includes(cell)) {
+    alert("Game Over! You hit a bomb.");
+    gameOver = true;
+    return;
+  }
+  
+  checkTile(cell);
+
+}
+
+function checkTile(cell) {
+  if (revealedCells.value.includes(cell)) return;
+  revealedCells.value.push(cell);
+  
+  const [r, c] = cell.split("-").map(Number);
+  let bombAround = 0;
+  let neighbors = [];
+  
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      let nr = r + dr;
+      let nc = c + dc;
+      let neighbor = `${nr}-${nc}`;
+      
+      if (nr > 0 && nr <= row && nc > 0 && nc <= column) {
+        neighbors.push(neighbor);
+        if (bombLocation.value.includes(neighbor)) {
+          bombAround++;
+        }
+      }
+    }
+  }
+
+  cellNumbers.value[cellLocation.value.indexOf(cell)] = bombAround;
+  
+  if (bombAround === 0) {
+    for (let neighbor of neighbors) {
+      checkTile(neighbor);
+    }
+  }
 }
 
 function setFlag() {
@@ -80,21 +139,29 @@ function setFlag() {
       </h1>
     </div>
 
-    <!-- grid-rows-9 grid-cols-16" สร้างตาราง 9 แถว 16 คอลั่่มน์ -->
+    <!-- grid-rows-9 grid-cols-16" สร้างตาราง 9 แถว 16 คอลั่มน์ -->
     <div class="w-[52rem] h-[29.25rem] m-auto mt-24 grid grid-rows-9 grid-cols-16">
     <div
       v-for="(cell, index) in cellLocation" 
       :key="index"
-      class="w-13 h-13 hover:bg-[#48bd7c]"
+      class="w-13 h-13 hover:brightness-90"
       :class="[
         'w-13 h-13',
-        (Math.floor(index / 16) + index % 16) % 2 === 0  
-           ? 'bg-[#5fc794]'
-           : 'bg-[#88deb7]' 
-      ]"
+        revealedCells.includes(cell)
+          ? (Math.floor(index / 16) + index % 16) % 2 === 0 
+            ? 'bg-[#74b6dc]'
+            : 'bg-[#9cc3da]'
+          : (Math.floor(index / 16) + index % 16) % 2 === 0  
+            ? 'bg-[#5fc794]'
+            : 'bg-[#88deb7]'
+        ]"
       :id="`${cell}`"
-      @click="clickTile"
-      ></div>
+      @click="clickTile">
+      <span v-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
+        {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
+      </span>
+      <span v-if="flaggedCells.includes(cell)">🚩</span>
+    </div>
   </div>
 
     <div class="flex items-center justify-center pt-4">
