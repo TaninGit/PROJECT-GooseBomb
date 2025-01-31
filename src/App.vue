@@ -142,11 +142,13 @@ function getBombBackground(cell) {
   }
 }
 
+
 function checkWin() {
   if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length)
     alert('Congratulations! The well can now be built, free from any mess!')
   
 }
+
 </script>
 
 <template>
