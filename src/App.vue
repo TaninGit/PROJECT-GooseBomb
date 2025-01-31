@@ -19,12 +19,6 @@ const bgFlagBtn = ref("bg-red-100");
 
 
 function setBombs() {
-  // เอาไว้ทดสอบ
-  // bombLocation.push("3-4")
-  // bombLocation.push("7-8")
-  // bombLocation.push("3-9")
-  // bombLocation.push("9-15")
-  // bombLocation.push("2-9")
 
   let bombleft = bombCount;
   while (bombleft > 0) {
@@ -80,8 +74,6 @@ function clickTile(event) {
   }
 
   if (bombLocation.value.includes(cell)) {
-    console.log(revealedCells.value);
-    console.log(revealedCells.value.length);
     gameOver.value = true;
     return;
   }
@@ -120,6 +112,7 @@ function checkTile(cell) {
       checkTile(neighbor);
     }
   }
+  checkWin()
 }
 
 function setFlag() {
@@ -148,6 +141,14 @@ function getBombBackground(cell) {
       return 'bg-red-600'
   }
 }
+
+
+function checkWin() {
+  if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length)
+    alert('Congratulations! The well can now be built, free from any mess!')
+  
+}
+
 </script>
 
 <template>
