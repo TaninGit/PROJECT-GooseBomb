@@ -132,8 +132,8 @@ function setFlag() {
 }
 
 function getCellBackground(cell, index) {
-  const isEven = (Math.floor(index / 16) + index % 16) % 2 === 0;
-  if (revealedCells.value.includes(cell)) 
+  const isEven = (Math.floor(index / column.value) + index % column.value) % 2 === 0;
+  if (revealedCells.value.includes(cell) ) 
     return isEven ? 'bg-[#74b6dc]' : 'bg-[#9cc3da]'
   else
     return isEven ? 'bg-[#5fc794]' : 'bg-[#88deb7]'
@@ -141,12 +141,10 @@ function getCellBackground(cell, index) {
 
 function getBombBackground(cell) {
   if (gameOver.value) {
-    if (bombLocation.value.includes(cell) && flaggedCells.value.includes(cell)) 
-      return ''
-    else if (bombLocation.value.includes(cell)) 
-      return 'bg-red-600'
+    if (bombLocation.value.includes(cell)) 
+    return 'bg-[#b2373c]'
     else if (flaggedCells.value.includes(cell)) 
-      return 'bg-red-600'
+      return ''
   }
 }
 
@@ -211,12 +209,12 @@ function resetGame() {
           getBombBackground(cell)
           ]"
         :id="`${cell}`"
-        @click="clickTile">
-        <span v-if="flaggedCells.includes(cell)">🚩</span>
+        @click="clickTile"> 
+        <span v-if="gameOver && bombLocation.includes(cell)"><img src="./assets/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto"></span>
         <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
           {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
-        </span>
-        <span v-else-if="gameOver && bombLocation.includes(cell)">💣</span>
+        </span><span v-else-if="flaggedCells.includes(cell)"> <img src="./assets/RedFlag.PNG" alt="RedFlag" class="w-3/5 h-auto block mx-auto"> </span>
+       
       </div>
     </div>
 
@@ -225,7 +223,7 @@ function resetGame() {
         class="border-2 border-red-500 p-5 rounded-2xl px-14 py-5 items-center"
         v-on:click="setFlag"
         :class="bgFlagBtn">
-        🚩
+        <img src="./assets/RedFlag.PNG" alt="RedFlag" width="30" height="30">
       </button>
     </div>
   </div>
