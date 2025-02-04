@@ -8,6 +8,10 @@ const revealedCells = ref([]);
 const flaggedCells = ref([]);
 const cellNumbers = ref([]);
 
+const timer = ref(0);
+let duration = null;
+let isPaused = ref(false);
+
 let flagEnabled = false;
 let gameOver = ref(false);
 
@@ -45,6 +49,8 @@ function startGame() {
   setBombs();
   let newBoard = [];
   let newCells = [];
+  timer.value = 0;
+  playTime();
 
   for (let r = 1; r <= row.value; r++) {
     let rowArr = [];
@@ -60,6 +66,33 @@ function startGame() {
   cellLocation.value = newCells;
 }
 
+function togglePause() {
+  if (isPaused.value) {
+    isPaused.value = false;
+    playTime();
+  } else {
+    isPaused.value = true;
+    if (duration) {
+      clearTimeout(duration);
+      duration = null;
+    }
+  }
+}
+
+function playTime() {
+  if (isPaused.value || gameOver.value) return;
+
+  function incrementTime() {
+    if (!gameOver.value && !isPaused.value) {
+      timer.value++;
+      duration = setTimeout(incrementTime, 1000);
+    }
+  }
+  
+  incrementTime();
+}
+
+
 watchEffect(() => {
   if (cellLocation.value.length === 0) {
     startGame();
@@ -67,8 +100,7 @@ watchEffect(() => {
 });
 
 function clickTile(event) {
-  if (gameOver.value) return;
-  
+  if (gameOver.value || isPaused.value) return;  
   const cell = event.target.id;
   
   if (flagEnabled) {
@@ -83,6 +115,7 @@ function clickTile(event) {
 
   if (bombLocation.value.includes(cell)) {
     gameOver.value = true;
+    isPaused.value = true;
     return;
   }
 
@@ -149,9 +182,9 @@ function getBombBackground(cell) {
 }
 
 function checkWin() {
-  if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length)
-    alert('Congratulations! The well can now be built, free from any mess!')
-  
+  if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length){
+    alert('Congratulations! The well can now be built, free from any mess!');
+  }
 }
 
 function changeLevel(level) {
@@ -173,6 +206,8 @@ function resetGame() {
   startGame();
 }
 
+
+
 </script>
 
 <template>
@@ -181,6 +216,9 @@ function resetGame() {
       <h1 class="font-bold text-center text-4xl pt-10">
         Bomb Count : {{ bombCount }}
       </h1>
+      <h2 class="text-center text-2xl">
+        Time: {{ timer }} sec
+      </h2>
     </div>
     <div class="flex justify-center mt-5">
       <select v-model="selectedLevel" @change="changeLevel(selectedLevel)" class="border-3 border-amber-800 p-2 text-xl font-bold">
@@ -209,7 +247,7 @@ function resetGame() {
           getBombBackground(cell)
           ]"
         :id="`${cell}`"
-        @click="clickTile"> 
+        v-on:click="clickTile"> 
         <span v-if="gameOver && bombLocation.includes(cell)"><img src="./assets/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto"></span>
         <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
           {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
@@ -224,6 +262,9 @@ function resetGame() {
         v-on:click="setFlag"
         :class="bgFlagBtn">
         <img src="./assets/RedFlag.PNG" alt="RedFlag" width="30" height="30">
+      </button>
+      <button class="ml-4 border-2 border-blue-500 p-5 rounded-2xl" v-on:click="togglePause">
+         {{ isPaused ? '▶ Resume Game' : '⏸ Pause Game' }}
       </button>
     </div>
   </div>
