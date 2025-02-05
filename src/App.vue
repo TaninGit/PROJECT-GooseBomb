@@ -246,7 +246,7 @@ function resetGame() {
         :class="[
           getCellBackground(cell, index),
           getBombBackground(cell),
-          { 'flagged-cell': flaggedCells.includes(cell) && !gameOver}
+          { 'flagged-cell': !(gameOver && bombLocation.includes(cell)) && flaggedCells.includes(cell)}
           ]"
         :id="`${cell}`"
         v-on:click="clickTile"> 
