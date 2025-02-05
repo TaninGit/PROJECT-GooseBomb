@@ -29,9 +29,7 @@ const row = ref(levels[selectedLevel.value].row);
 
 let bombCount = ref(levels[selectedLevel.value].bombCount);
 
-
 function setBombs() {
-
   let bombleft = bombCount.value;
   while (bombleft > 0) {
     let r = Math.floor(Math.random() * row.value) + 1;
@@ -88,7 +86,6 @@ function playTime() {
       duration = setTimeout(incrementTime, 1000);
     }
   }
-  
   incrementTime();
 }
 
@@ -105,10 +102,14 @@ function clickTile(event) {
   
   if (flagEnabled) {
     const index = flaggedCells.value.indexOf(cell);
-    if (index !== -1) {
-      flaggedCells.value.splice(index, 1);
-    } else {
-      flaggedCells.value.push(cell);
+    if (!revealedCells.value.includes(cell)) {
+      if (index !== -1) {
+        flaggedCells.value.splice(index, 1);
+        bombCount.value += 1
+      } else if (!revealedCells.value.includes(index)) {
+        flaggedCells.value.push(cell);
+        bombCount.value -= 1
+      }
     }
     return;
   }
@@ -244,15 +245,17 @@ function resetGame() {
         }"
         :class="[
           getCellBackground(cell, index),
-          getBombBackground(cell)
+          getBombBackground(cell),
+          { 'flagged-cell': !(gameOver && bombLocation.includes(cell)) && flaggedCells.includes(cell)}
           ]"
         :id="`${cell}`"
         v-on:click="clickTile"> 
-        <span v-if="gameOver && bombLocation.includes(cell)"><img src="./assets/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto"></span>
+        <span v-if="gameOver && bombLocation.includes(cell)">
+          <img src="./assets/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto">
+        </span>
         <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
           {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
-        </span><span v-else-if="flaggedCells.includes(cell)"> <img src="./assets/RedFlag.PNG" alt="RedFlag" class="w-3/5 h-auto block mx-auto"> </span>
-       
+        </span>
       </div>
     </div>
 
@@ -271,5 +274,12 @@ function resetGame() {
 </template>
 
 <style scoped>
-
+.flagged-cell {
+  background-image: url('./assets/RedFlag.PNG');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 100%;
+  height: 100%;
+}
 </style>
