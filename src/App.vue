@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -19,7 +19,7 @@ const bgFlagBtn = ref("bg-red-100");
 
 const selectedLevel = ref("medium");
 const levels = {
-  easy: { row: 5, column: 8, bombCount: 10 },
+  easy: { row: 5, column: 8, bombCount: 2 },
   medium: { row: 9, column: 16, bombCount: 35 },
   hard: { row: 15, column: 25, bombCount: 75 },
 };
@@ -28,8 +28,21 @@ const column = ref(levels[selectedLevel.value].column);
 const row = ref(levels[selectedLevel.value].row);
 
 let bombCount = ref(levels[selectedLevel.value].bombCount);
+const isStarted = ref(false);
 
 let isFirstEvent = true
+
+const gooseSrc = ["src/assets/images/Character/GooseFly.PNG","src/assets/images/Character/GooseFlyV2.PNG"]
+const currentGoose = ref(gooseSrc[0])
+
+function gooseToggle() {
+  setTimeout(()=>{
+    currentGoose.value = currentGoose.value === gooseSrc[0] ? gooseSrc[1] : gooseSrc[0]
+    gooseToggle()
+  },800)
+}
+
+function clickPlay() {isStarted.value = true}
 
 function setBombs() {
   let bombleft = bombCount.value;
@@ -92,7 +105,9 @@ function playTime() {
 
 
 watchEffect(() => {
-  if (cellLocation.value.length === 0) {
+  if(isStarted.value === false) {
+    gooseToggle();
+  }else if (cellLocation.value.length === 0 && isStarted.value === true) {
     startGame();
   }
 });
@@ -191,7 +206,7 @@ function getBombBackground(cell) {
 function checkWin() {
   if(revealedCells.value.length == cellLocation.value.length-bombLocation.value.length){
     alert('Congratulations! The well can now be built, free from any mess!');
-  }
+  } 
 }
 
 function changeLevel(level) {
@@ -216,9 +231,17 @@ function resetGame() {
 
 
 </script>
-
 <template>
-  <div>
+  <div v-show="!isStarted" class="flex flex-col items-center pt-15 w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)]">
+    <img class="animate-bounce w-200" src="./assets/images/topic.png" alt="topicGooseBomb">
+    <img @click="clickPlay" src="./assets/images/Button/play_button.PNG" alt="play button" class="w-40 pt-5 ">
+    <div class="flex gap-0">
+      <img :src="currentGoose" alt="gooseFly" class="w-[200px] mr-150 -rotate-20 animate-wiggle">
+      <img  src="./assets/images/Character/GooseFrontView.PNG" alt="gooseHalt" class="w-[120px] animate-wiggle">
+    </div>
+  </div>
+
+  <div v-show="isStarted" class="w-screen h-full bg-[url(/src/assets/images/Background.PNG)]">
     <div>
       <h1 class="font-bold text-center text-4xl pt-10">
         Bomb Count : {{ bombCount }}
@@ -273,6 +296,7 @@ function resetGame() {
       </button>
     </div>
   </div>
+
 </template>
 
 <style scoped>
@@ -283,5 +307,23 @@ function resetGame() {
   background-size: contain;
   width: 100%;
   height: 100%;
+}
+  .animate-bounce {
+    animation-timeline: auto;
+    animation-range-start: normal;
+    animation-range-end: normal;
+    animation: 3s ease 0s infinite normal none running bounce;
+ }
+
+ @keyframes wiggle {
+  0% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+@layer utilities {
+  .animate-wiggle {
+    animation: wiggle 1s ease-in-out infinite;
+  }
 }
 </style>
