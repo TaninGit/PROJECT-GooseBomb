@@ -29,6 +29,8 @@ const row = ref(levels[selectedLevel.value].row);
 
 let bombCount = ref(levels[selectedLevel.value].bombCount);
 
+let isFirstEvent = true
+
 function setBombs() {
   let bombleft = bombCount.value;
   while (bombleft > 0) {
@@ -48,8 +50,7 @@ function startGame() {
   let newBoard = [];
   let newCells = [];
   timer.value = 0;
-  playTime();
-
+  
   for (let r = 1; r <= row.value; r++) {
     let rowArr = [];
     for (let c = 1; c <= column.value; c++) {
@@ -97,9 +98,14 @@ watchEffect(() => {
 });
 
 function clickTile(event) {
-  if (gameOver.value || isPaused.value) return;  
+  if (gameOver.value || isPaused.value) return;
   const cell = event.target.id;
-  
+
+  if(isFirstEvent) {
+    playTime();
+    isFirstEvent = false;
+  }
+
   if (flagEnabled) {
     const index = flaggedCells.value.indexOf(cell);
     if (!revealedCells.value.includes(cell)) {
@@ -238,11 +244,7 @@ function resetGame() {
       <div
         v-for="(cell, index) in cellLocation" 
         :key="index"
-        class="hover:brightness-90 flex items-center justify-center"
-        :style="{
-        width: '100%',
-        height: '100%'
-        }"
+        class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]"
         :class="[
           getCellBackground(cell, index),
           getBombBackground(cell),
@@ -251,7 +253,7 @@ function resetGame() {
         :id="`${cell}`"
         v-on:click="clickTile"> 
         <span v-if="gameOver && bombLocation.includes(cell)">
-          <img src="./assets/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto">
+          <img src="./assets/images/Character/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto">
         </span>
         <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
           {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
@@ -264,7 +266,7 @@ function resetGame() {
         class="border-2 border-red-500 p-5 rounded-2xl px-14 py-5 items-center"
         v-on:click="setFlag"
         :class="bgFlagBtn">
-        <img src="./assets/RedFlag.PNG" alt="RedFlag" width="30" height="30">
+        <img src="./assets/images/Character/RedFlag.PNG" alt="RedFlag" width="30" height="30">
       </button>
       <button class="ml-4 border-2 border-blue-500 p-5 rounded-2xl" v-on:click="togglePause">
          {{ isPaused ? '▶ Resume Game' : '⏸ Pause Game' }}
@@ -275,7 +277,7 @@ function resetGame() {
 
 <style scoped>
 .flagged-cell {
-  background-image: url('./assets/RedFlag.PNG');
+  background-image: url('./assets/images/Character/RedFlag.PNG');
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
