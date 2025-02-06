@@ -30,7 +30,7 @@ const row = ref(levels[selectedLevel.value].row);
 let bombCount = ref(levels[selectedLevel.value].bombCount);
 const isStarted = ref(false);
 
-let isFirstEvent = true
+let isFirstEvent = ref(true)
 
 const gooseSrc = ["src/assets/images/Character/GooseFly.PNG","src/assets/images/Character/GooseFlyV2.PNG"]
 const currentGoose = ref(gooseSrc[0])
@@ -116,9 +116,9 @@ function clickTile(event) {
   if (gameOver.value || isPaused.value) return;
   const cell = event.target.id;
 
-  if(isFirstEvent) {
+  if(isFirstEvent.value) {
     playTime();
-    isFirstEvent = false;
+    isFirstEvent.value = false;
   }
 
   if (flagEnabled) {
@@ -225,6 +225,11 @@ function resetGame() {
   flaggedCells.value = [];
   cellNumbers.value = [];
   gameOver.value = false;
+  isPaused.value = false;
+  clearTimeout(duration);
+  duration = null;       
+  timer.value = 0; 
+  isFirstEvent.value = true;
   startGame();
 }
 
@@ -293,6 +298,11 @@ function resetGame() {
       </button>
       <button class="ml-4 border-2 border-blue-500 p-5 rounded-2xl" v-on:click="togglePause">
          {{ isPaused ? '▶ Resume Game' : '⏸ Pause Game' }}
+      </button>
+      <button
+        class="border-2 border-green-600 p-3 rounded-2xl px-9 py-5 items-center ml-4"
+        @click="resetGame">
+        🔄Restart Game
       </button>
     </div>
   </div>
