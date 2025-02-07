@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -12,14 +12,12 @@ const timer = ref(0);
 let duration = null;
 let isPaused = ref(false);
 
-let flagEnabled = false;
+let flagEnabled = ref(false);
 let gameOver = ref(false);
-
-const bgFlagBtn = ref("bg-red-100");
 
 const selectedLevel = ref("medium");
 const levels = {
-  easy: { row: 5, column: 8, bombCount: 2 },
+  easy: { row: 5, column: 8, bombCount: 10 },
   medium: { row: 9, column: 16, bombCount: 35 },
   hard: { row: 15, column: 25, bombCount: 75 },
 };
@@ -95,14 +93,13 @@ function playTime() {
   if (isPaused.value || gameOver.value) return;
 
   function incrementTime() {
-    if (!gameOver.value && !isPaused.value) {
+    if (!gameOver.value || (!isPaused.value && revealedCells.value.length !== 0)) {
       timer.value++;
       duration = setTimeout(incrementTime, 1000);
     }
   }
   incrementTime();
 }
-
 
 watchEffect(() => {
   if(isStarted.value === false) {
@@ -121,7 +118,7 @@ function clickTile(event) {
     isFirstEvent.value = false;
   }
 
-  if (flagEnabled) {
+  if (flagEnabled.value) {
     const index = flaggedCells.value.indexOf(cell);
     if (!revealedCells.value.includes(cell)) {
       if (index !== -1) {
@@ -178,13 +175,7 @@ function checkTile(cell) {
   checkWin()
 }
 
-function setFlag() {
-  flagEnabled = !flagEnabled;
-  if (flagEnabled) 
-    bgFlagBtn.value = "bg-red-300";
-  else 
-    bgFlagBtn.value = "bg-red-100";
-}
+function setFlag() { flagEnabled.value = !flagEnabled.value }
 
 function getCellBackground(cell, index) {
   const isEven = (Math.floor(index / column.value) + index % column.value) % 2 === 0;
@@ -192,15 +183,6 @@ function getCellBackground(cell, index) {
     return isEven ? 'bg-[#74b6dc]' : 'bg-[#9cc3da]'
   else
     return isEven ? 'bg-[#5fc794]' : 'bg-[#88deb7]'
-}
-
-function getBombBackground(cell) {
-  if (gameOver.value) {
-    if (bombLocation.value.includes(cell)) 
-    return 'bg-[#b2373c]'
-    else if (flaggedCells.value.includes(cell)) 
-      return ''
-  }
 }
 
 function checkWin() {
@@ -232,73 +214,91 @@ function resetGame() {
   isFirstEvent.value = true;
   startGame();
 }
-
-
-
 </script>
+
 <template>
   <div v-show="!isStarted" class="flex flex-col items-center pt-15 w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)]">
     <img class="animate-bounce w-200" src="./assets/images/topic.png" alt="topicGooseBomb">
-    <img @click="clickPlay" src="./assets/images/Button/play_button.PNG" alt="play button" class="w-40 pt-5 ">
+    <div class="flex flex-row space-x-10">
+      <img @click="clickPlay" src="./assets/images/Button/play_button.PNG" alt="play button" class="w-40 pt-5 ">
+      <img src="./assets/images/Button/info_button.PNG" class="w-40 pt-5">
+    </div>
     <div class="flex gap-0">
       <img :src="currentGoose" alt="gooseFly" class="w-[200px] mr-150 -rotate-20 animate-wiggle">
       <img  src="./assets/images/Character/GooseFrontView.PNG" alt="gooseHalt" class="w-[120px] animate-wiggle">
     </div>
   </div>
 
-  <div v-show="isStarted" class="w-screen h-full bg-[url(/src/assets/images/Background.PNG)]">
-    <div>
-      <h1 class="font-bold text-center text-4xl pt-10">
-        Bomb Count : {{ bombCount }}
-      </h1>
-      <h2 class="text-center text-2xl">
-        Time: {{ timer }} sec
-      </h2>
-    </div>
-    <div class="flex justify-center mt-5">
-      <select v-model="selectedLevel" @change="changeLevel(selectedLevel)" class="border-3 border-amber-800 p-2 text-xl font-bold">
-        <option value="easy">Easy</option>
-        <option value="medium">Medium</option>
-        <option value="hard">Hard</option>
-      </select>
-    </div>
-
-    <div class="w-[52rem] h-[29.25rem] m-auto mt-15" 
-      :style="{
-      display: 'grid',
-      gridTemplateColumns: `repeat(${column}, 1fr)`,
-      gridTemplateRows: `repeat(${row}, 1fr)`,
-      }">
-      <div
-        v-for="(cell, index) in cellLocation" 
-        :key="index"
-        class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]"
-        :class="[
-          getCellBackground(cell, index),
-          getBombBackground(cell),
-          { 'flagged-cell': !(gameOver && bombLocation.includes(cell)) && flaggedCells.includes(cell)}
-          ]"
-        :id="`${cell}`"
-        v-on:click="clickTile"> 
-        <span v-if="gameOver && bombLocation.includes(cell)">
-          <img src="./assets/images/Character/poop.PNG" alt="Bomb" class="w-3/5 h-auto block mx-auto">
-        </span>
-        <span v-else-if="revealedCells.includes(cell) && !bombLocation.includes(cell)">
-          {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
-        </span>
+  <div v-show="isStarted" class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center">
+    <img src="./assets/images/Button/pause_button.PNG" alt="Pause" class="w-25 mr-7 mt-3 absolute top-0 right-0" @click="togglePause">
+    <div class="bg-[#643B35] w-fit p-5">
+      <div class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]">
+        <div class="font-primary bg-[#74B6DC] w-[55rem] h-[8rem] m-auto drop-shadow-lg flex justify-center items-center">
+          <div class="flex justify-center items-center absolute left-5">
+            <select v-model="selectedLevel" @change="changeLevel(selectedLevel)" class="border-3 border-amber-800 p-2 text-xl font-bold font-primary bg-[#FFF4DA] text-[#643B35]">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="flex flex-row justify-center items-center space-x-15">
+            <div class="flex flex-row items-center space-x-5">
+              <img src="./assets/images/Character/GooseRedFlag.PNG" alt="GooseRedFlag" class="w-17">
+              <h1 class="text-7xl text-[#B2373C]" :class="'text_stroke'">
+                {{ bombCount }}
+              </h1>
+            </div>
+            <div class="flex flex-row items-center space-x-5">
+              <img src="./assets/images/Character/Clock.PNG" alt="Clock" class="h-19">
+              <h2 class="text-7xl text-[#614224]" :class="'text_stroke'">
+                {{ timer }} 
+              </h2>
+            </div>
+          </div>
+          <div class="flex justify-center items-center absolute right-5">
+            <button
+              class="border-3 border-red-700 p-5 px-7 py-2 items-center"
+              v-on:click="setFlag"
+              :class="flagEnabled ? 'bg-red-300' : 'bg-red-100'">
+              <img src="./assets/images/Character/RedFlag.PNG" alt="RedFlag" width="25" height="30">
+            </button>
+          </div>
+        </div>
+        <div class="w-[55rem] h-[31rem] m-auto" 
+          :style="{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${column}, 1fr)`,
+          gridTemplateRows: `repeat(${row}, 1fr)`,
+          }">
+          <div
+            v-for="(cell, index) in cellLocation" 
+            :key="index"
+            class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]"
+            :class="[
+              getCellBackground(cell, index),
+              {'bomb-cell' : gameOver && bombLocation.includes(cell)},
+              { 'flagged-cell': flaggedCells.includes(cell)}
+              ]"
+            :id="`${cell}`"
+            v-on:click="clickTile"> 
+            <span v-if="revealedCells.includes(cell) && !bombLocation.includes(cell)" 
+              class="font-secondary text-4xl"
+              :class="[
+                'text_stroke',
+                {'isOne' : cellNumbers[cellLocation.indexOf(cell)] === 1},
+                {'isTwo' : cellNumbers[cellLocation.indexOf(cell)] === 2},
+                {'isThree' : cellNumbers[cellLocation.indexOf(cell)] === 3},
+                {'isFour' : cellNumbers[cellLocation.indexOf(cell)] === 4},
+                {'isFive' : cellNumbers[cellLocation.indexOf(cell)] === 5}
+              ]">
+              {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
-
+    
     <div class="flex items-center justify-center pt-4">
-      <button
-        class="border-2 border-red-500 p-5 rounded-2xl px-14 py-5 items-center"
-        v-on:click="setFlag"
-        :class="bgFlagBtn">
-        <img src="./assets/images/Character/RedFlag.PNG" alt="RedFlag" width="30" height="30">
-      </button>
-      <button class="ml-4 border-2 border-blue-500 p-5 rounded-2xl" v-on:click="togglePause">
-         {{ isPaused ? '▶ Resume Game' : '⏸ Pause Game' }}
-      </button>
       <button
         class="border-2 border-green-600 p-3 rounded-2xl px-9 py-5 items-center ml-4"
         @click="resetGame">
@@ -306,18 +306,26 @@ function resetGame() {
       </button>
     </div>
   </div>
-
 </template>
 
 <style scoped>
-.flagged-cell {
-  background-image: url('./assets/images/Character/RedFlag.PNG');
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 100%;
-  height: 100%;
-}
+  .flagged-cell {
+    background-image: url('./assets/images/Character/RedFlag.PNG');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-size: 55%;
+  }
+
+  .bomb-cell {
+    background-color: #b2373c;
+    background-image: url('./assets/images/Character/poop.PNG');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-size: 65%;
+  }
+
   .animate-bounce {
     animation-timeline: auto;
     animation-range-start: normal;
@@ -325,15 +333,40 @@ function resetGame() {
     animation: 3s ease 0s infinite normal none running bounce;
  }
 
- @keyframes wiggle {
-  0% { transform: rotate(0deg); }
-  50% { transform: rotate(10deg); }
-  100% { transform: rotate(0deg); }
-}
-
-@layer utilities {
-  .animate-wiggle {
-    animation: wiggle 1s ease-in-out infinite;
+  @keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
   }
-}
+
+  @layer utilities {
+    .animate-wiggle {
+      animation: wiggle 1s ease-in-out infinite;
+    }
+  }
+
+  .text_stroke {
+    text-shadow: 1px 1px 0px #FFF4DA, -1px -1px 0px #FFF4DA, 1px -1px 0px #FFF4DA, -1px 1px 0px #FFF4DA;
+  }
+
+  .isOne {
+    color: #FCF358;
+  }
+
+  .isTwo {
+    color: #FF8F5F;
+  }
+
+  .isThree {
+    color: #F88BBE;
+  }
+
+  .isFour {
+    color: #B2373C;
+  }
+
+  .isFive {
+    color: #614224;
+  }
+  
 </style>
