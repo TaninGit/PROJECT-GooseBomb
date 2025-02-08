@@ -226,6 +226,15 @@ function resetGame() {
   bombCount.value = levels[selectedLevel.value].bombCount
   startGame();
 }
+
+const popupStyle = ref('display:none;')
+function openPopUp() {
+  popupStyle.value = 'display:block;'
+}
+function closePopUp() {
+  popupStyle.value = 'display:none;'
+}
+
 </script>
 
 <template>
@@ -233,16 +242,32 @@ function resetGame() {
     <img class="animate-bounce w-200" src="./assets/images/topic.png" alt="topicGooseBomb">
     <div class="flex flex-row space-x-10">
       <img @click="clickPlay" src="./assets/images/Button/play_button.PNG" alt="play button" class="w-40 pt-5 ">
-      <img src="./assets/images/Button/info_button.PNG" class="w-40 pt-5">
+      <img @click="openPopUp" src="./assets/images/Button/info_button.PNG" alt="how to play button" class="w-40 pt-5">
+      <div :style="popupStyle" class="absolute">
+        <div class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="bg-white w-[1000px] h-[650px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1">
+          <button class="border border-red-500" @click="closePopUp">Close it</button>
+          <!-- text here -->
+        </div>
+      </div>
     </div>
-    <div class="flex gap-0">
+    <div class="flex">
       <img :src="currentGoose" alt="gooseFly" class="w-[200px] mr-150 -rotate-20 animate-wiggle">
-      <img  src="./assets/images/Character/GooseFrontView.PNG" alt="gooseHalt" class="w-[120px] animate-wiggle">
+      <img src="./assets/images/Character/GooseFrontView.PNG" alt="gooseHalt" class="w-[120px] animate-wiggle">
     </div>
   </div>
 
   <div v-show="isStarted" class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center">
-    <img src="./assets/images/Button/pause_button.PNG" alt="Pause" class="w-25 mr-7 mt-3 absolute top-0 right-0" @click="togglePause">
+    <img @click="togglePause(); openPopUp();" src="./assets/images/Button/pause_button.PNG" alt="Pause" class="w-25 mr-7 mt-3 absolute top-0 right-0">
+    
+     <div v-bind:style="popupStyle" class="absolute z-50">
+        <div class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+        <div class="bg-white w-[600px] h-[550px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <button class="border border-red-500" @click="togglePause(); closePopUp()">Close it</button>
+          <!-- text here -->
+        </div>
+     </div>
+    
     <div class="bg-[#643B35] w-fit p-5">
       <div class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]">
         <div class="font-primary bg-[#74B6DC] w-[55rem] h-[8rem] m-auto drop-shadow-lg flex justify-center items-center">
@@ -292,15 +317,18 @@ function resetGame() {
             :id="`${cell}`"
             v-on:click="clickTile">
             <span v-if="revealedCells.includes(cell)" 
-              class="font-secondary text-4xl"
-              :class="[
+              class="font-secondary"
+              :class="
                 'text_stroke',
                 {'isOne' : cellNumbers[cellLocation.indexOf(cell)] === 1},
                 {'isTwo' : cellNumbers[cellLocation.indexOf(cell)] === 2},
                 {'isThree' : cellNumbers[cellLocation.indexOf(cell)] === 3},
                 {'isFour' : cellNumbers[cellLocation.indexOf(cell)] === 4},
-                {'isFive' : cellNumbers[cellLocation.indexOf(cell)] === 5}
-              ]">
+                {'isFive' : cellNumbers[cellLocation.indexOf(cell)] === 5},
+                {'text-7xl' : selectedLevel === 'easy'},
+                {'text-4xl' : selectedLevel === 'medium'},
+                {'text-xl' : selectedLevel === 'hard'}
+              ">
               {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
             </span>
           </div>
@@ -319,6 +347,7 @@ function resetGame() {
 </template>
 
 <style scoped>
+
   .flagged-cell {
     background-image: url('./assets/images/Character/RedFlag.PNG');
     background-position: center;
