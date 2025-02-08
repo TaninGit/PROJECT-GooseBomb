@@ -93,7 +93,7 @@ function playTime() {
   if (isPaused.value || gameOver.value) return;
 
   function incrementTime() {
-    if (!gameOver.value || (!isPaused.value && revealedCells.value.length !== 0)) {
+    if (!isPaused.value && (revealedCells.value.length || (flaggedCells.value.length || !isFirstEvent.value))) {
       timer.value++;
       duration = setTimeout(incrementTime, 1000);
     }
@@ -113,11 +113,6 @@ function clickTile(event) {
   if (gameOver.value || isPaused.value) return;
   const cell = event.target.id;
 
-  if(isFirstEvent.value) {
-    playTime();
-    isFirstEvent.value = false;
-  }
-
   if (flagEnabled.value) {
     const index = flaggedCells.value.indexOf(cell);
     if (!revealedCells.value.includes(cell) && cell !== '') {
@@ -126,6 +121,10 @@ function clickTile(event) {
       } else {
         flaggedCells.value.push(cell);
       }
+    }
+    if(isFirstEvent.value) {
+      playTime();
+      isFirstEvent.value = false;
     }
     return;
   }
@@ -137,6 +136,11 @@ function clickTile(event) {
   }
 
   checkTile(cell);
+
+  if(isFirstEvent.value) {
+    playTime();
+    isFirstEvent.value = false;
+  }
 }
 
 function checkTile(cell) {
