@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -120,13 +120,11 @@ function clickTile(event) {
 
   if (flagEnabled.value) {
     const index = flaggedCells.value.indexOf(cell);
-    if (!revealedCells.value.includes(cell)) {
+    if (!revealedCells.value.includes(cell) && cell !== '') {
       if (index !== -1) {
         flaggedCells.value.splice(index, 1);
-        bombCount.value += 1
-      } else if (!revealedCells.value.includes(index)) {
+      } else {
         flaggedCells.value.push(cell);
-        bombCount.value -= 1
       }
     }
     return;
@@ -175,6 +173,15 @@ function checkTile(cell) {
   checkWin()
 }
 
+watch([flaggedCells.value, revealedCells.value], () => {
+  for (let i = flaggedCells.value.length - 1; i >= 0; i--) {
+    if (revealedCells.value.includes(flaggedCells.value[i]))
+      flaggedCells.value.splice(i, 1);
+  }
+  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length
+},
+{ immediate: true })
+
 function setFlag() { flagEnabled.value = !flagEnabled.value }
 
 function getCellBackground(cell, index) {
@@ -212,6 +219,7 @@ function resetGame() {
   duration = null;       
   timer.value = 0; 
   isFirstEvent.value = true;
+  bombCount.value = levels[selectedLevel.value].bombCount
   startGame();
 }
 </script>
@@ -274,14 +282,12 @@ function resetGame() {
             v-for="(cell, index) in cellLocation" 
             :key="index"
             class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]"
-            :class="[
-              getCellBackground(cell, index),
-              {'bomb-cell' : gameOver && bombLocation.includes(cell)},
-              { 'flagged-cell': flaggedCells.includes(cell)}
-              ]"
+            :class="getCellBackground(cell, index),
+              { 'bomb-cell' : gameOver && bombLocation.includes(cell)},
+              { 'flagged-cell' : flaggedCells.includes(cell) && !revealedCells.includes(cell)}"
             :id="`${cell}`"
-            v-on:click="clickTile"> 
-            <span v-if="revealedCells.includes(cell) && !bombLocation.includes(cell)" 
+            v-on:click="clickTile">
+            <span v-if="revealedCells.includes(cell)" 
               class="font-secondary text-4xl"
               :class="[
                 'text_stroke',
