@@ -20,7 +20,7 @@
 
 ✅ **021** - Graphic design, setBombs function, changeLevel function, resetGame function, clickSetting function, edit template
 
-✅ **034** - Figma Design, startGame function, gooseToggle function, clickPaly function, popUp function, edit template
+✅ **034** - Figma Design, startGame function, gooseToggle function, clickPlay function, popUp function, edit template
 
 ✅ **054** - Graphic design, checkWin function,  getBombBackground function, getCellBackground function, clickHome function, musicControl function, edit template
 
