@@ -2,13 +2,13 @@
 
 ## รายชื่อสมาชิก
 
-| ลำดับ | รหัสนักศึกษา   | ชื่อ-นามสกุล                 | GitHub Username |     สัปดาห์ที่ 1     |     สัปดาห์ที่ 2   |
-|-------|-----------------|---------------------|-----------------|-----------------|-----------------|
-| 1     | 66130500018     | ชนันธร ศรีวรชัย         |   mook2005      |    Figma Design  |  clickTile, checkTile function, watchEffect, edit template |
-| 2     | 66130500021     | ชัญญา นิ่มถาวร         |    CNProud       | Graphic design  | setBombs, changeLevel, resetGame, edit template |
-| 3     | 66130500034     | ทนิน เก้าเอี้ยน          |    TaninGit      |  Figma Design   | startGame function, edit template |
-| 4     | 66130500054     | เบญญาพร เมธาวิวรรธน์กุล  |    Benyaporn54   | Graphic design  | checkWin function |
-| 5     | 66130500061     | ปัณณพร อโนทัยสินทวี     |    Butt3rPann    | Figma Design    | getBombBackground, getCellBackground function, edit template |
+| ลำดับ | รหัสนักศึกษา   | ชื่อ-นามสกุล                 | GitHub Username |     สัปดาห์ที่ 1     |     สัปดาห์ที่ 2   |    สัปดาห์ที่ 3    |
+|-------|-----------------|---------------------|-----------------|-----------------|-----------------|-----------------|
+| 1     | 66130500018     | ชนันธร ศรีวรชัย         |   mook2005      |    Figma Design  |  clickTile, checkTile function, watchEffect, edit template |  togglePause, playTime, incrementTime function, edit template  |
+| 2     | 66130500021     | ชัญญา นิ่มถาวร         |    CNProud       | Graphic design  | setBombs, changeLevel, resetGame, edit template | add images folder, update resetGame, clickTile function, edit template |
+| 3     | 66130500034     | ทนิน เก้าเอี้ยน          |    TaninGit      |  Figma Design   | startGame function, edit template | add background and animation on home page |
+| 4     | 66130500054     | เบญญาพร เมธาวิวรรธน์กุล  |    Benyaporn54   | Graphic design  | checkWin function | update getBombBackground, getCellBackground function |
+| 5     | 66130500061     | ปัณณพร อโนทัยสินทวี     |    Butt3rPann    | Figma Design    | getBombBackground, getCellBackground function, edit template | edit bomb count |
 
 
 --------------
@@ -16,15 +16,15 @@
 
 # การแบ่งงาน
 
-✅ **018** - Figma Design, clickTile function, checkTile function, watchEffect, playTime function, pauseGame function, popUp function, edit template
+✅ **018** - Figma Design, clickTile function, checkTile function, watchEffect, togglePause function, playTime function, incrementTime function, edit template
 
 ✅ **021** - Graphic design, setBombs function, changeLevel function, resetGame function, clickSetting function, edit template
 
-✅ **034** - Figma Design, startGame function, gooseAnimate function, clickPaly function, edit template
+✅ **034** - Figma Design, startGame function, gooseToggle function, clickPaly function, popUp function, edit template
 
-✅**054** - Graphic design, checkWin function,  getBombBackground function, getCellBackground function, clickHome function, edit template
+✅ **054** - Graphic design, checkWin function,  getBombBackground function, getCellBackground function, clickHome function, musicControl function, edit template
 
-✅**061** - Figma Design, getBombBackground function, getCellBackground function, displayFlagClicked function, clickTutorial function, edit template
+✅ **061** - Figma Design, getBombBackground function, getCellBackground function, displayFlagClicked function, clickTutorial function, edit template
 
 
 --------------
