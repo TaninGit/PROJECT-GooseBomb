@@ -17,7 +17,7 @@
 
 ## Play
 
-![Image](https://github.com/user-attachments/assets/f4fa40c8-c6bb-461d-8124-1ae4fd23def0)
+![image](https://github.com/user-attachments/assets/58257836-9997-47d8-934e-e9c294d32e87)
 
 ## Pause pop-up
 
