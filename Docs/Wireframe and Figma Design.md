@@ -12,7 +12,8 @@
 
 ## Tutorial
 
-![Image](https://github.com/user-attachments/assets/57e7bd8d-d861-4277-a500-f1cde144a05a)
+![image](https://github.com/user-attachments/assets/2cca8a69-41fe-4fd2-8c8d-4421c7641578)
+![image](https://github.com/user-attachments/assets/8e994471-a267-4ff9-8538-840adf849652)
 
 ## Play
 
