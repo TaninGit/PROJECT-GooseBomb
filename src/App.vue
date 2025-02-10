@@ -30,11 +30,10 @@ const isStarted = ref(false);
 
 let isFirstEvent = ref(true);
 
-const gooseSrc = [
-  "src/assets/images/Character/GooseFly.PNG",
-  "src/assets/images/Character/GooseFlyV2.PNG",
-];
-const currentGoose = ref(gooseSrc[0]);
+const gooseSrc = ["src/assets/images/Character/GooseFly.PNG","src/assets/images/Character/GooseFlyV2.PNG"]
+const currentGoose = ref(gooseSrc[0])
+const musicPlayer = ref('')
+const onMusic = ref(true)
 
 function gooseToggle() {
   setTimeout(() => {
@@ -254,9 +253,53 @@ function openPopUp() {
 function closePopUp() {
   popupStyle.value = "display:none;";
 }
+
+function backToHome() {
+ isStarted.value = false;
+}
+
+function playMusic() {
+  onMusic.value = !onMusic.value
+  if(onMusic.value) musicPlayer.value.play()
+  else musicPlayer.value.pause()
+}
+function startMusic() {
+  if(onMusic.value) musicPlayer.value.play()
+}
+
 </script>
 
 <template>
+  <div @click="startMusic">
+    <audio controls class="hidden" ref="musicPlayer" autoplay loop>
+      <source src="./assets/BGM.mp3" type="audio/mp3">
+      <p>
+        Your browser doesn't support this audio file. Here is a
+        <a href="BGM.mp3">link to the audio</a> instead.
+      </p>
+    </audio>
+
+    <div v-show="!isStarted"
+      class="flex flex-col items-center pt-15 w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)]">
+      <img class="animate-bounce w-200" src="./assets/images/topic.png" alt="topicGooseBomb">
+      <div class="flex flex-row space-x-10">
+        <img @click="clickPlay(); resetGame()" src="./assets/images/Button/play_button.PNG" alt="play button"
+          class="w-40 pt-5 ">
+        <img @click="openPopUp" src="./assets/images/Button/info_button.PNG" alt="how to play button" class="w-40 pt-5">
+        <div :style="popupStyle" class="absolute">
+          <div class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          </div>
+          <div class="bg-white w-[1000px] h-[650px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1">
+            <button class="border border-red-500" @click="closePopUp">Close it</button>
+            <!-- text here -->
+          </div>
+        </div>
+      </div>
+      <div class="flex">
+        <img :src="currentGoose" alt="gooseFly" class="w-[200px] mr-150 -rotate-20 animate-wiggle">
+        <img src="./assets/images/Character/GooseFrontView.PNG" alt="gooseHalt" class="w-[120px] animate-wiggle">
+      </div>
+    </div>
   <div
     v-show="!isStarted"
     class="flex flex-col items-center pt-15 w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)]"
@@ -394,147 +437,94 @@ function closePopUp() {
     </div>
   </div>
 
-  <div
-    v-show="isStarted"
-    class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center"
-  >
-    <img
-      @click="
-        togglePause();
-        openPopUp();
-      "
-      src="./assets/images/Button/pause_button.PNG"
-      alt="Pause"
-      class="w-25 mr-7 mt-3 absolute top-0 right-0"
-    />
-
-    <div v-bind:style="popupStyle" class="absolute z-50">
-      <div
-        class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      ></div>
-      <div
-        class="bg-white w-[600px] h-[550px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      >
-        <button
-          class="border border-red-500"
-          @click="
-            togglePause();
-            closePopUp();
-          "
-        >
-          Close it
-        </button>
-        <!-- text here -->
-      </div>
-    </div>
-
-    <div class="bg-[#643B35] w-fit p-5">
-      <div
-        class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]"
-      >
-        <div
-          class="font-primary bg-[#74B6DC] w-[55rem] h-[8rem] m-auto drop-shadow-lg flex justify-center items-center"
-        >
-          <div class="flex justify-center items-center absolute left-5">
-            <select
-              v-model="selectedLevel"
-              @change="changeLevel(selectedLevel)"
-              class="border-3 border-amber-800 p-2 text-xl font-bold font-primary bg-[#FFF4DA] text-[#643B35]"
-            >
-              <option value="easy">Easy</option>
-              <option value="medium">Medium</option>
-              <option value="hard">Hard</option>
-            </select>
-          </div>
-          <div class="flex flex-row justify-center items-center space-x-15">
-            <div class="flex flex-row items-center space-x-5">
-              <img
-                src="./assets/images/Character/GooseRedFlag.PNG"
-                alt="GooseRedFlag"
-                class="w-17"
-              />
-              <h1 class="text-7xl text-[#B2373C]" :class="'text_stroke'">
-                {{ bombCount }}
-              </h1>
-            </div>
-            <div class="flex flex-row items-center space-x-5">
-              <img
-                src="./assets/images/Character/Clock.PNG"
-                alt="Clock"
-                class="h-19"
-              />
-              <h2 class="text-7xl text-[#614224]" :class="'text_stroke'">
-                {{ timer }}
-              </h2>
-            </div>
-          </div>
-          <div class="flex justify-center items-center absolute right-5">
-            <button
-              class="border-3 border-red-700 p-5 px-7 py-2 items-center"
-              v-on:click="setFlag"
-              :class="flagEnabled ? 'bg-red-300' : 'bg-red-100'"
-            >
-              <img
-                src="./assets/images/Character/RedFlag.PNG"
-                alt="RedFlag"
-                width="25"
-                height="30"
-              />
-            </button>
-          </div>
+    <div v-show="isStarted"
+      class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center">
+      <img @click="togglePause(); openPopUp();" src="./assets/images/Button/pause_button.PNG" alt="Pause"
+        class="w-25 mr-7 mt-3 absolute top-0 right-0">
+      <div v-bind:style="popupStyle" class="absolute z-50">
+        <div class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
         </div>
         <div
-          class="w-[55rem] h-[31rem] m-auto"
-          :style="{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${column}, 1fr)`,
-            gridTemplateRows: `repeat(${row}, 1fr)`,
-          }"
-        >
+          class=" bg-[#fff4de]  border-[#643B35] border-25 rounded-md w-[600px] h-[550px]  shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+          <img src="./assets/images/musicIcon.png" alt="music icon"
+            class="absolute w-20 top-1/3 left-0 translate-x-1/4 ">
+          <h1
+            class="absolute top-1/3 left-1/2  -translate-x-12/13 text-7xl font-bold font-primary  text-[#643B35] z-60 ">
+            Music</h1>
+          <input @click="playMusic" v-model="onMusic" type="checkbox" checked="checked" class="toggle  toggle-xl scale-150
+          border-[#fff4de]  bg-[#C9A480] text-[#fff4de] checked:bg-[#643B35] checked:text-[#fff4de] 
+          absolute top-1/3 right-1/4 translate-x-9/11 translate-y-9/11" />
+          <img src="./assets/images/pauseTopic.png" alt="pause"
+            class="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-13/7 z-60 ">
+          <img @click="backToHome(); closePopUp()" src="./assets/images/Button/home_button.PNG" alt="home button"
+            class="absolute w-30 bottom-[10%] left-0 translate-x-1/4 z-60 ">
+          <img @click="togglePause(); closePopUp()" src="./assets/images/Button/play_button.PNG" alt="play button"
+            class="absolute w-30 bottom-[10%] left-1/2 -translate-x-1/2  z-60 ">
+          <img @click="resetGame(); closePopUp()" src="./assets/images/Button/reset_button.PNG" alt="restart button"
+            class="absolute w-30 bottom-[10%] right-0 -translate-x-1/4 z-60 ">
+        </div>
+      </div>
+
+      <div class="bg-[#643B35] w-fit p-5">
+        <div class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]">
           <div
-            v-for="(cell, index) in cellLocation"
-            :key="index"
-            class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]"
-            :class="
-              (getCellBackground(cell, index),
-              { 'bomb-cell': gameOver && bombLocation.includes(cell) },
-              {
-                'flagged-cell':
-                  flaggedCells.includes(cell) && !revealedCells.includes(cell),
-              })
-            "
-            :id="`${cell}`"
-            v-on:click="clickTile"
-          >
-            <span
-              v-if="revealedCells.includes(cell)"
-              class="font-secondary"
-              :class="
-                ('text_stroke',
-                { isOne: cellNumbers[cellLocation.indexOf(cell)] === 1 },
-                { isTwo: cellNumbers[cellLocation.indexOf(cell)] === 2 },
-                { isThree: cellNumbers[cellLocation.indexOf(cell)] === 3 },
-                { isFour: cellNumbers[cellLocation.indexOf(cell)] === 4 },
-                { isFive: cellNumbers[cellLocation.indexOf(cell)] === 5 },
-                { 'text-7xl': selectedLevel === 'easy' },
-                { 'text-4xl': selectedLevel === 'medium' },
-                { 'text-xl': selectedLevel === 'hard' })
-              "
-            >
-              {{ cellNumbers[cellLocation.indexOf(cell)] || "" }}
-            </span>
+            class="font-primary bg-[#74B6DC] w-[55rem] h-[8rem] m-auto drop-shadow-lg flex justify-center items-center">
+            <div class="flex justify-center items-center absolute left-5">
+              <select v-model="selectedLevel" @change="changeLevel(selectedLevel)"
+                class="border-3 border-amber-800 p-2 text-xl font-bold font-primary bg-[#FFF4DA] text-[#643B35]">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <div class="flex flex-row justify-center items-center space-x-15">
+              <div class="flex flex-row items-center space-x-5">
+                <img src="./assets/images/Character/GooseRedFlag.PNG" alt="GooseRedFlag" class="w-17">
+                <h1 class="text-7xl text-[#B2373C]" :class="'text_stroke'">
+                  {{ bombCount }}
+                </h1>
+              </div>
+              <div class="flex flex-row items-center space-x-5">
+                <img src="./assets/images/Character/Clock.PNG" alt="Clock" class="h-19">
+                <h2 class="text-7xl text-[#614224]" :class="'text_stroke'">
+                  {{ timer }}
+                </h2>
+              </div>
+            </div>
+            <div class="flex justify-center items-center absolute right-5">
+              <button class="border-3 border-red-700 p-5 px-7 py-2 items-center" v-on:click="setFlag"
+                :class="flagEnabled ? 'bg-red-300' : 'bg-red-100'">
+                <img src="./assets/images/Character/RedFlag.PNG" alt="RedFlag" width="25" height="30">
+              </button>
+            </div>
+          </div>
+          <div class="w-[55rem] h-[31rem] m-auto" :style="{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${column}, 1fr)`,
+          gridTemplateRows: `repeat(${row}, 1fr)`,
+          }">
+            <div v-for="(cell, index) in cellLocation" :key="index"
+              class="hover:brightness-90 flex items-center justify-center w-[100%] h-[100%]" :class="getCellBackground(cell, index),
+              { 'bomb-cell' : gameOver && bombLocation.includes(cell)},
+              { 'flagged-cell' : flaggedCells.includes(cell) && !revealedCells.includes(cell)}" :id="`${cell}`"
+              v-on:click="clickTile">
+              <span v-if="revealedCells.includes(cell)" class="font-secondary" :class="
+                'text_stroke',
+                {'isOne' : cellNumbers[cellLocation.indexOf(cell)] === 1},
+                {'isTwo' : cellNumbers[cellLocation.indexOf(cell)] === 2},
+                {'isThree' : cellNumbers[cellLocation.indexOf(cell)] === 3},
+                {'isFour' : cellNumbers[cellLocation.indexOf(cell)] === 4},
+                {'isFive' : cellNumbers[cellLocation.indexOf(cell)] === 5},
+                {'text-7xl' : selectedLevel === 'easy'},
+                {'text-4xl' : selectedLevel === 'medium'},
+                {'text-xl' : selectedLevel === 'hard'}
+              ">
+                {{ cellNumbers[cellLocation.indexOf(cell)] || '' }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="flex items-center justify-center pt-4">
-      <button
-        class="border-2 border-green-600 p-3 rounded-2xl px-9 py-5 items-center ml-4"
-        @click="resetGame"
-      >
-        🔄Restart Game
-      </button>
     </div>
   </div>
 </template>
