@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -158,7 +158,13 @@ function clickTile(event) {
 
 function checkTile(cell) {
   if (revealedCells.value.includes(cell)) return;
+
   revealedCells.value.push(cell);
+
+  if (flaggedCells.value.includes(cell) && revealedCells.value.includes(cell)) {
+    const index = flaggedCells.value.findIndex(c => c === cell)
+      flaggedCells.value.splice(index, 1);
+  }
 
   const [r, c] = cell.split("-").map(Number);
   let bombAround = 0;
@@ -190,18 +196,9 @@ function checkTile(cell) {
   checkWin();
 }
 
-watch(
-  [flaggedCells.value, revealedCells.value],
-  () => {
-    for (let i = flaggedCells.value.length - 1; i >= 0; i--) {
-      if (revealedCells.value.includes(flaggedCells.value[i]))
-        flaggedCells.value.splice(i, 1);
-    }
-    bombCount.value =
-      levels[selectedLevel.value].bombCount - flaggedCells.value.length;
-  },
-  { immediate: true }
-);
+watchEffect(() => {
+  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length;
+});
 
 function setFlag() {
   flagEnabled.value = !flagEnabled.value;
@@ -245,7 +242,6 @@ function resetGame() {
   duration = null;
   timer.value = 0;
   isFirstEvent.value = true;
-  bombCount.value = levels[selectedLevel.value].bombCount;
   startGame();
 }
 
@@ -255,6 +251,30 @@ function openPopUp() {
 }
 function closePopUp() {
   popupStyle.value = "display:none;";
+}
+
+function getCellNumbersColor(cellNumber) {
+  if (cellNumber === 1) {
+    return 'text-[#FCF358]'
+  } else if (cellNumber === 2) {
+    return 'text-[#FF8F5F]'
+  } else if (cellNumber === 3) {
+    return 'text-[#F88BBE]'
+  } else if (cellNumber === 4) {
+    return 'text-[#B2373C]'
+  } else {
+    return 'text-[#614224]'
+  }
+}
+
+function getCellNumbersSize(level) {
+  if (level === 'easy') {
+    return 'text-7xl'
+  } else if (level === 'medium') {
+    return 'text-4xl'
+  } else {
+    return 'text-xl'
+  }
 }
 
 function backToHome() {
@@ -712,11 +732,7 @@ function startMusic() {
               :class="
                 getCellBackground(cell, index),
                 { 'bomb-cell': gameOver && bombLocation.includes(cell) },
-                {
-                  'flagged-cell':
-                    flaggedCells.includes(cell) &&
-                    !revealedCells.includes(cell),
-                }
+                { 'flagged-cell': flaggedCells.includes(cell) }
               "
               :id="`${cell}`"
               v-on:click="clickTile"
@@ -726,14 +742,8 @@ function startMusic() {
                 class="font-secondary"
                 :class="
                   'text_stroke',
-                  { isOne: cellNumbers[cellLocation.indexOf(cell)] === 1 },
-                  { isTwo: cellNumbers[cellLocation.indexOf(cell)] === 2 },
-                  { isThree: cellNumbers[cellLocation.indexOf(cell)] === 3 },
-                  { isFour: cellNumbers[cellLocation.indexOf(cell)] === 4 },
-                  { isFive: cellNumbers[cellLocation.indexOf(cell)] === 5 },
-                  { 'text-7xl': selectedLevel === 'easy' },
-                  { 'text-4xl': selectedLevel === 'medium' },
-                  { 'text-xl': selectedLevel === 'hard' }
+                  getCellNumbersColor(cellNumbers[cellLocation.indexOf(cell)]),
+                  getCellNumbersSize(selectedLevel)
                 "
               >
                 {{ cellNumbers[cellLocation.indexOf(cell)] || "" }}
@@ -813,25 +823,5 @@ function startMusic() {
 .text_stroke {
   text-shadow: 1px 1px 0px #fff4da, -1px -1px 0px #fff4da, 1px -1px 0px #fff4da,
     -1px 1px 0px #fff4da;
-}
-
-.isOne {
-  color: #fcf358;
-}
-
-.isTwo {
-  color: #ff8f5f;
-}
-
-.isThree {
-  color: #f88bbe;
-}
-
-.isFour {
-  color: #b2373c;
-}
-
-.isFive {
-  color: #614224;
 }
 </style>
