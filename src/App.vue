@@ -13,7 +13,10 @@ let duration = null;
 let isPaused = ref(false);
 
 let flagEnabled = ref(false);
-let gameOver = ref(false);
+const gameOver = ref(false);
+const isWin = ref(false);
+const winTime = ref(0);
+const showGameOverPopup = ref(false);
 
 const selectedLevel = ref("medium");
 const levels = {
@@ -120,6 +123,14 @@ watchEffect(() => {
   } else if (cellLocation.value.length === 0 && isStarted.value === true) {
     startGame();
   }
+  if (gameOver.value) {
+    setTimeout(() => {
+      showGameOverPopup.value = true; 
+    }, 1500);
+  } else {
+    showGameOverPopup.value = false;
+  }
+  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length;
 });
 
 function clickTile(event) {
@@ -196,10 +207,6 @@ function checkTile(cell) {
   checkWin();
 }
 
-watchEffect(() => {
-  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length;
-});
-
 function setFlag() {
   flagEnabled.value = !flagEnabled.value;
 }
@@ -217,8 +224,11 @@ function checkWin() {
     revealedCells.value.length ==
     cellLocation.value.length - bombLocation.value.length
   ) {
-    alert("Congratulations! The well can now be built, free from any mess!");
+    isWin.value = true;
+    winTime.value = timer.value;
+    clearTimeout(duration);
   }
+
 }
 
 function changeLevel(level) {
@@ -242,6 +252,8 @@ function resetGame() {
   duration = null;
   timer.value = 0;
   isFirstEvent.value = true;
+  isWin.value = false;
+  winTime.value = 0;
   startGame();
 }
 
@@ -279,6 +291,7 @@ function getCellNumbersSize(level) {
 
 function backToHome() {
   isStarted.value = false;
+  resetGame();
 }
 
 function playMusic() {
@@ -595,6 +608,7 @@ function startMusic() {
       class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center"
     >
       <img
+        v-show="isWin===false && showGameOverPopup===false"
         @click="
           togglePause();
           openPopUp();
@@ -662,7 +676,7 @@ function startMusic() {
         </div>
       </div>
 
-      <div class="bg-[#643B35] w-fit p-5">
+      <div v-show="isWin===false && showGameOverPopup===false" class="bg-[#643B35] w-fit p-5">
         <div
           class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]"
         >
@@ -749,6 +763,83 @@ function startMusic() {
                 {{ cellNumbers[cellLocation.indexOf(cell)] || "" }}
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+      <div v-show="isWin===true" :style="popupStyle">
+        <div
+          class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="bg-[#fff4de] border-[#643B35] border-25 rounded-md w-[600px] h-[550px] shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col justify-center items-center"
+        >
+          <img 
+          src="./assets/images/Topic/WIN.png" 
+          alt="win"
+          class="w-54">
+          <img 
+          src="./assets/images/Character/GooseWithTrophy.png"
+          alt="winGoose"
+          class="w-54">
+          <p class="font-secondary text-3xl">Congratulations!</p>
+          <p class="font-secondary text-3xl">Time {{ winTime }} sec</p>
+          <div class="flex mt-2 w-62 justify-between">
+            <img
+            @click="
+              backToHome();
+              closePopUp();
+            "
+            src="./assets/images/Button/home_button.PNG"
+            alt="home button"
+            class="w-26 h-26"
+            />
+            <img
+            @click="
+              resetGame();
+              closePopUp();
+            "
+            src="./assets/images/Button/reset_button.PNG"
+            alt="restart button"
+            class="w-26 h-26"
+            />
+          </div>
+        </div>
+      </div>
+      <div v-show="showGameOverPopup===true" :style="popupStyle">
+        <div
+          class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="bg-[#fff4de] border-[#643B35] border-25 rounded-md w-[600px] h-[550px] shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col justify-center items-center"
+        >
+          <img 
+          src="./assets/images/Topic/LOSE.png" 
+          alt="win"
+          class="w-54">
+          <img 
+          src="./assets/images/Character/GooseInWater.PNG"
+          alt="winGoose"
+          class="w-54">
+          <p class="font-secondary text-3xl">Bad Luck!</p>
+          <div class="flex mt-2 w-62 justify-between">
+            <img
+            @click="
+              backToHome();
+              closePopUp();
+            "
+            src="./assets/images/Button/home_button.PNG"
+            alt="home button"
+            class="w-26 h-26"
+            />
+            <img
+            @click="
+              resetGame();
+              closePopUp();
+            "
+            src="./assets/images/Button/reset_button.PNG"
+            alt="restart button"
+            class="w-26 h-26"
+            />
           </div>
         </div>
       </div>
