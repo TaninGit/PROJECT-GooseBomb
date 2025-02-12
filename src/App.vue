@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -13,7 +13,10 @@ let duration = null;
 let isPaused = ref(false);
 
 let flagEnabled = ref(false);
-let gameOver = ref(false);
+const gameOver = ref(false);
+const isWin = ref(false);
+const winTime = ref(0);
+const showGameOverPopup = ref(false);
 
 const selectedLevel = ref("medium");
 const levels = {
@@ -120,6 +123,14 @@ watchEffect(() => {
   } else if (cellLocation.value.length === 0 && isStarted.value === true) {
     startGame();
   }
+  if (gameOver.value) {
+    setTimeout(() => {
+      showGameOverPopup.value = true; 
+    }, 1500);
+  } else {
+    showGameOverPopup.value = false;
+  }
+  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length;
 });
 
 function clickTile(event) {
@@ -158,7 +169,13 @@ function clickTile(event) {
 
 function checkTile(cell) {
   if (revealedCells.value.includes(cell)) return;
+
   revealedCells.value.push(cell);
+
+  if (flaggedCells.value.includes(cell) && revealedCells.value.includes(cell)) {
+    const index = flaggedCells.value.findIndex(c => c === cell)
+      flaggedCells.value.splice(index, 1);
+  }
 
   const [r, c] = cell.split("-").map(Number);
   let bombAround = 0;
@@ -190,19 +207,6 @@ function checkTile(cell) {
   checkWin();
 }
 
-watch(
-  [flaggedCells.value, revealedCells.value],
-  () => {
-    for (let i = flaggedCells.value.length - 1; i >= 0; i--) {
-      if (revealedCells.value.includes(flaggedCells.value[i]))
-        flaggedCells.value.splice(i, 1);
-    }
-    bombCount.value =
-      levels[selectedLevel.value].bombCount - flaggedCells.value.length;
-  },
-  { immediate: true }
-);
-
 function setFlag() {
   flagEnabled.value = !flagEnabled.value;
 }
@@ -220,8 +224,11 @@ function checkWin() {
     revealedCells.value.length ==
     cellLocation.value.length - bombLocation.value.length
   ) {
-    alert("Congratulations! The well can now be built, free from any mess!");
+    isWin.value = true;
+    winTime.value = timer.value;
+    clearTimeout(duration);
   }
+
 }
 
 function changeLevel(level) {
@@ -245,7 +252,8 @@ function resetGame() {
   duration = null;
   timer.value = 0;
   isFirstEvent.value = true;
-  bombCount.value = levels[selectedLevel.value].bombCount;
+  isWin.value = false;
+  winTime.value = 0;
   startGame();
 }
 
@@ -257,8 +265,33 @@ function closePopUp() {
   popupStyle.value = "display:none;";
 }
 
+function getCellNumbersColor(cellNumber) {
+  if (cellNumber === 1) {
+    return 'text-[#FCF358]'
+  } else if (cellNumber === 2) {
+    return 'text-[#FF8F5F]'
+  } else if (cellNumber === 3) {
+    return 'text-[#F88BBE]'
+  } else if (cellNumber === 4) {
+    return 'text-[#B2373C]'
+  } else {
+    return 'text-[#614224]'
+  }
+}
+
+function getCellNumbersSize(level) {
+  if (level === 'easy') {
+    return 'text-7xl'
+  } else if (level === 'medium') {
+    return 'text-4xl'
+  } else {
+    return 'text-xl'
+  }
+}
+
 function backToHome() {
   isStarted.value = false;
+  resetGame();
 }
 
 function playMusic() {
@@ -574,6 +607,7 @@ function startMusic() {
       class="w-screen h-screen bg-cover bg-center bg-[url(/src/assets/images/Background.PNG)] flex items-center justify-center"
     >
       <img
+        v-show="isWin===false && showGameOverPopup===false"
         @click="
           togglePause();
           openPopUp();
@@ -641,7 +675,7 @@ function startMusic() {
         </div>
       </div>
 
-      <div class="bg-[#643B35] w-fit p-5">
+      <div v-show="isWin===false && showGameOverPopup===false" class="bg-[#643B35] w-fit p-5">
         <div
           class="flex flex-col items-center bg-[#AE8774] w-fit p-7 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)]"
         >
@@ -711,11 +745,7 @@ function startMusic() {
               :class="
                 getCellBackground(cell, index),
                 { 'bomb-cell': gameOver && bombLocation.includes(cell) },
-                {
-                  'flagged-cell':
-                    flaggedCells.includes(cell) &&
-                    !revealedCells.includes(cell),
-                }
+                { 'flagged-cell': flaggedCells.includes(cell) }
               "
               :id="`${cell}`"
               v-on:click="clickTile"
@@ -725,19 +755,90 @@ function startMusic() {
                 class="font-secondary"
                 :class="
                   'text_stroke',
-                  { isOne: cellNumbers[cellLocation.indexOf(cell)] === 1 },
-                  { isTwo: cellNumbers[cellLocation.indexOf(cell)] === 2 },
-                  { isThree: cellNumbers[cellLocation.indexOf(cell)] === 3 },
-                  { isFour: cellNumbers[cellLocation.indexOf(cell)] === 4 },
-                  { isFive: cellNumbers[cellLocation.indexOf(cell)] === 5 },
-                  { 'text-7xl': selectedLevel === 'easy' },
-                  { 'text-4xl': selectedLevel === 'medium' },
-                  { 'text-xl': selectedLevel === 'hard' }
+                  getCellNumbersColor(cellNumbers[cellLocation.indexOf(cell)]),
+                  getCellNumbersSize(selectedLevel)
                 "
               >
                 {{ cellNumbers[cellLocation.indexOf(cell)] || "" }}
               </span>
             </div>
+          </div>
+        </div>
+      </div>
+      <div v-show="isWin===true" :style="popupStyle">
+        <div
+          class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="bg-[#fff4de] border-[#643B35] border-25 rounded-md w-[600px] h-[550px] shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col justify-center items-center"
+        >
+          <img 
+          src="./assets/images/Topic/WIN.png" 
+          alt="win"
+          class="w-54">
+          <img 
+          src="./assets/images/Character/GooseWithTrophy.png"
+          alt="winGoose"
+          class="w-54">
+          <p class="font-secondary text-3xl">Congratulations!</p>
+          <p class="font-secondary text-3xl">Time {{ winTime }} sec</p>
+          <div class="flex mt-2 w-62 justify-between">
+            <img
+            @click="
+              backToHome();
+              closePopUp();
+            "
+            src="./assets/images/Button/home_button.PNG"
+            alt="home button"
+            class="w-26 h-26"
+            />
+            <img
+            @click="
+              resetGame();
+              closePopUp();
+            "
+            src="./assets/images/Button/reset_button.PNG"
+            alt="restart button"
+            class="w-26 h-26"
+            />
+          </div>
+        </div>
+      </div>
+      <div v-show="showGameOverPopup===true" :style="popupStyle">
+        <div
+          class="bg-black opacity-60 h-screen w-screen fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        ></div>
+        <div
+          class="bg-[#fff4de] border-[#643B35] border-25 rounded-md w-[600px] h-[550px] shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 flex flex-col justify-center items-center"
+        >
+          <img 
+          src="./assets/images/Topic/LOSE.png" 
+          alt="win"
+          class="w-54">
+          <img 
+          src="./assets/images/Character/GooseInWater.PNG"
+          alt="winGoose"
+          class="w-54">
+          <p class="font-secondary text-3xl">Bad Luck!</p>
+          <div class="flex mt-2 w-62 justify-between">
+            <img
+            @click="
+              backToHome();
+              closePopUp();
+            "
+            src="./assets/images/Button/home_button.PNG"
+            alt="home button"
+            class="w-26 h-26"
+            />
+            <img
+            @click="
+              resetGame();
+              closePopUp();
+            "
+            src="./assets/images/Button/reset_button.PNG"
+            alt="restart button"
+            class="w-26 h-26"
+            />
           </div>
         </div>
       </div>
@@ -812,25 +913,5 @@ function startMusic() {
 .text_stroke {
   text-shadow: 1px 1px 0px #fff4da, -1px -1px 0px #fff4da, 1px -1px 0px #fff4da,
     -1px 1px 0px #fff4da;
-}
-
-.isOne {
-  color: #fcf358;
-}
-
-.isTwo {
-  color: #ff8f5f;
-}
-
-.isThree {
-  color: #f88bbe;
-}
-
-.isFour {
-  color: #b2373c;
-}
-
-.isFive {
-  color: #614224;
 }
 </style>
