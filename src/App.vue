@@ -345,8 +345,7 @@ function startMusic() {
             class="bg-[#643B35] w-[1000px] h-[650px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1"
           >
             <div
-              class="bg-[#FDF7F4] w-[950px] h-[600px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] flex flex-col items-center p-6"
+              class="bg-[#FDF7F4] w-[950px] h-[600px] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 shadow-[inset_0px_0px_10px_5px_rgba(0,0,0,0.3)] flex flex-col items-center p-6"
             >
               <img
                 @click="closePopUp()"
@@ -409,8 +408,8 @@ function startMusic() {
                       </div>
                       <p class="font-thai text-lg">
                         เมื่อเริ่มเกมแถบข้างบนจะบอกถึงจำนวนอึทั้งหมดของน้องห่านในกระดาน
-                        โดยจะเปลี่ยนไปตามเลเวลที่เลือก
-                        และจำนวนจะลดลงเรื่อยๆ เมื่อเราปักธง
+                        โดยจะเปลี่ยนไปตามเลเวลที่เลือก และจำนวนจะลดลงเรื่อยๆ
+                        เมื่อเราปักธง
                       </p>
                     </div>
                   </div>
