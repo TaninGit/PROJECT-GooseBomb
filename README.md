@@ -2,13 +2,13 @@
 
 ## รายชื่อสมาชิก
 
-| ลำดับ | รหัสนักศึกษา   | ชื่อ-นามสกุล                 | GitHub Username |     สัปดาห์ที่ 1     |     สัปดาห์ที่ 2   |    สัปดาห์ที่ 3    |
-|-------|-----------------|---------------------|-----------------|-----------------|-----------------|-----------------|
-| 1     | 66130500018     | ชนันธร ศรีวรชัย         |   mook2005      |    Figma Design  |  clickTile, checkTile function, watchEffect, edit template |  togglePause, playTime, incrementTime function, edit template  |
-| 2     | 66130500021     | ชัญญา นิ่มถาวร         |    CNProud       | Graphic design  | setBombs, changeLevel, resetGame, edit template | add images folder, update resetGame, clickTile function, edit template |
-| 3     | 66130500034     | ทนิน เก้าเอี้ยน          |    TaninGit      |  Figma Design   | startGame function, edit template | add background and animation on home page |
-| 4     | 66130500054     | เบญญาพร เมธาวิวรรธน์กุล  |    Benyaporn54   | Graphic design  | checkWin function | update getBombBackground, getCellBackground function |
-| 5     | 66130500061     | ปัณณพร อโนทัยสินทวี     |    Butt3rPann    | Figma Design    | getBombBackground, getCellBackground function, edit template | edit bomb count |
+| ลำดับ | รหัสนักศึกษา   | ชื่อ-นามสกุล                 | GitHub Username | สัดส่วนเปอร์เซ็นต์การทำงาน |     สัปดาห์ที่ 1     |     สัปดาห์ที่ 2   |    สัปดาห์ที่ 3    |    สัปดาห์ที่ 4    |
+|-------|-----------------|---------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
+| 1     | 66130500018     | ชนันธร ศรีวรชัย         |   mook2005      | 20% |    Figma Design  |  clickTile, checkTile function, watchEffect, edit template |  togglePause, playTime, incrementTime function, edit template  | edit template, styling tutorial popup |
+| 2     | 66130500021     | ชัญญา นิ่มถาวร         |    CNProud       | 20% | Graphic design  | setBombs, changeLevel, resetGame, edit template | add images folder, update resetGame, clickTile function, edit template | update tutorial in figma, watchEffect, checkWin function, edit template, styling win/lose popup |
+| 3     | 66130500034     | ทนิน เก้าเอี้ยน          |    TaninGit      | 20% |  Figma Design   | startGame function, edit template | add background and animation on home page | create popup template, add popup function |
+| 4     | 66130500054     | เบญญาพร เมธาวิวรรธน์กุล  |    Benyaporn54   | 20% | Graphic design  | checkWin function | update getBombBackground, getCellBackground function | add backToHome, playMusic, startMusic function, edit template |
+| 5     | 66130500061     | ปัณณพร อโนทัยสินทวี     |    Butt3rPann    | 20% | Figma Design    | getBombBackground, getCellBackground function, edit template | edit bomb count | delete getBombBackground function, add getCellNumbersSize, getCellNumbersColor function, edit & styling play game template, update bomb count |
 
 
 --------------
@@ -16,15 +16,15 @@
 
 # การแบ่งงาน
 
-✅ **018** - Figma Design, clickTile function, checkTile function, watchEffect, togglePause function, playTime function, incrementTime function, edit template
+✅ **018** (20%) - Figma Design, clickTile function, checkTile function, watchEffect, togglePause function, playTime function, incrementTime function, edit template
 
-✅ **021** - Graphic design, setBombs function, changeLevel function, resetGame function, clickSetting function, edit template
+✅ **021** (20%) - Graphic Design, Figma Design, setBombs function, changeLevel function, resetGame function, watchEffect, checkWin function, edit template
 
-✅ **034** - Figma Design, startGame function, gooseToggle function, clickPlay function, popUp function, edit template
+✅ **034** (20%) - Figma Design, startGame function, gooseToggle function, clickPlay function, popUp function, edit template, create animation on home page
 
-✅ **054** - Graphic design, checkWin function,  getBombBackground function, getCellBackground function, clickHome function, musicControl function, edit template
+✅ **054** (20%) - Graphic Design, checkWin function, getCellBackground function, backToHome function, playMusic function, startMusic function, musicControl function, edit template
 
-✅ **061** - Figma Design, getBombBackground function, getCellBackground function, displayFlagClicked function, clickTutorial function, edit template
+✅ **061** (20%) - Figma Design, getCellBackground function,  getCellNumbersSize function, getCellNumbersColor function, watchEffect , edit template
 
 
 --------------
@@ -71,3 +71,37 @@
 
 5. **เครื่องหมาย** 🚩  
    - ใช้สำหรับทำสัญลักษณ์ในช่องที่คิดว่าเป็นสิ่งสกปรก เพื่อป้องกันการขุดพลาด
+
+
+--------------
+
+
+# วิธีการเล่นเกม
+
+![tutorial](https://github.com/user-attachments/assets/95315277-7db1-466c-875a-c9febb8eead1)
+
+
+--------------
+
+
+# คลิปสาธิต features ของแอปพลิเคชัน
+
+🚩 In process
+
+
+--------------
+
+# แรงบันดาลใจในการพัฒนาแอปพลิเคชัน และแหล่งข้อมูลอ้างอิง
+
+## 🎨 แรงบันดาลใจในการพัฒนาแอปพลิเคชัน
+
+โปรเจกต์นี้ได้รับแรงบันดาลใจมาจากเกม **Minesweeper** ซึ่งเป็นเกมที่ผู้เล่นต้องใช้ตรรกะในการเปิดช่องให้หมดโดยหลีกเลี่ยงระเบิด ใน Project นี้ได้ดัดแปลงแนวคิดจาก Minesweeper มาเป็นการขุดหาบ่อน้ำให้กับห่าน 🦢 โดยต้องหลีกเลี่ยง **สิ่งสกปรก** 💩 ที่ห่านทิ้งไว้แทน
+
+## 📚 แหล่งข้อมูลอ้างอิง
+
+- **การเขียน CSS**  
+  - อ้างอิงแนวทางจาก Project รุ่นพี่ ที่เคยพัฒนาแอปพลิเคชันแนวเกมมาก่อน  
+  - ใช้ **ChatGPT** เป็นเครื่องมือช่วยแนะนำและแก้ไข code CSS ให้เหมาะสม
+
+- **เพลงประกอบ (Background Music)**  
+  - ใช้เพลงจาก **[YouTube](https://youtu.be/lt5je1VIU48?si=Vkr7K-_SCnH6gXt5)** เพื่อเพิ่มบรรยากาศให้กับเกม 🎵  
