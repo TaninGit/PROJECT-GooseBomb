@@ -172,7 +172,7 @@ function checkTile(cell) {
 
   revealedCells.value.push(cell);
 
-  if (flaggedCells.value.includes(cell) && revealedCells.value.includes(cell)) {
+  if (flaggedCells.value.includes(cell)) {
     const index = flaggedCells.value.findIndex(c => c === cell)
       flaggedCells.value.splice(index, 1);
   }

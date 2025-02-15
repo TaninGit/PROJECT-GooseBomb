@@ -8,12 +8,14 @@
 
 ## Homepage
 
-![Image](https://github.com/user-attachments/assets/0df87b8a-fe07-4552-bc30-1600da08e1a5)
+![image](https://github.com/user-attachments/assets/1a820675-5ca8-4f6f-981b-8fd4211f1d53)
 
 ## Tutorial
 
-![image](https://github.com/user-attachments/assets/2cca8a69-41fe-4fd2-8c8d-4421c7641578)
-![image](https://github.com/user-attachments/assets/8e994471-a267-4ff9-8538-840adf849652)
+![image](https://github.com/user-attachments/assets/b95627bc-17ed-44f0-b132-bcee759ff0e7)
+
+![image](https://github.com/user-attachments/assets/d05705a5-d0a1-4c6f-8439-232697ce6420)
+
 
 ## Play
 
@@ -21,7 +23,8 @@
 
 ## Pause pop-up
 
-![Image](https://github.com/user-attachments/assets/e74a2b8b-e9e6-4aa2-86f3-b05a16063c6a)
+![image](https://github.com/user-attachments/assets/eb2dd570-5b62-4322-80f7-6ea29353a690)
+
 
 ## Result - win
 
