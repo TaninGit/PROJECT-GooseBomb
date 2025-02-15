@@ -254,6 +254,8 @@ function resetGame() {
   isFirstEvent.value = true;
   isWin.value = false;
   winTime.value = 0;
+  bombCount.value = levels[selectedLevel.value].bombCount;
+  flagEnabled.value = false;
   startGame();
 }
 
@@ -373,7 +375,7 @@ function startMusic() {
                         class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                       />
                     </div>
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 1 :
@@ -395,7 +397,7 @@ function startMusic() {
                       alt="tutorial_step_2"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 2 :
@@ -417,7 +419,7 @@ function startMusic() {
                       alt="tutorial_step_3"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 3 :
@@ -437,7 +439,7 @@ function startMusic() {
                       alt="tutorial_step_4"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 4 :
@@ -458,7 +460,7 @@ function startMusic() {
                       alt="tutorial_step_5"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 5 :
@@ -478,7 +480,7 @@ function startMusic() {
                       alt="tutorial_step_6"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 6 :
@@ -499,7 +501,7 @@ function startMusic() {
                       alt="tutorial_step_7"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 7 :
@@ -527,7 +529,7 @@ function startMusic() {
                         class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                       />
                     </div>
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 8 :
@@ -547,7 +549,7 @@ function startMusic() {
                       alt="tutorial_step_9"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 9 :
@@ -567,7 +569,7 @@ function startMusic() {
                       alt="tutorial_step_10"
                       class="w-42 h-42 mr-1.5 border-solid border-4 border-[#643B35]"
                     />
-                    <div class="flex flex-col px-3 gap-1">
+                    <div class="flex flex-col px-3 gap-1 text-[#643B35]">
                       <div>
                         <span class="font-primary tutorial_step_text"
                           >Step 10 :
@@ -719,7 +721,7 @@ function startMusic() {
               <button
                 class="border-3 border-red-700 p-5 px-7 py-2 items-center"
                 v-on:click="setFlag"
-                :class="flagEnabled ? 'bg-red-300' : 'bg-red-100'"
+                :class="flagEnabled ? 'bg-red-300' : 'bg-[#FFF4DA]'"
               >
                 <img
                   src="./assets/images/Character/RedFlag.PNG"
@@ -780,8 +782,8 @@ function startMusic() {
           src="./assets/images/Character/GooseWithTrophy.png"
           alt="winGoose"
           class="w-54">
-          <p class="font-secondary text-3xl">Congratulations!</p>
-          <p class="font-secondary text-3xl">Time {{ winTime }} sec</p>
+          <p class="font-secondary text-3xl text-[#643B35]">Congratulations!</p>
+          <p class="font-secondary text-3xl text-[#643B35]">Time {{ winTime }} sec</p>
           <div class="flex mt-2 w-62 justify-between">
             <img
             @click="
@@ -819,7 +821,7 @@ function startMusic() {
           src="./assets/images/Character/GooseInWater.PNG"
           alt="winGoose"
           class="w-54">
-          <p class="font-secondary text-3xl">Bad Luck!</p>
+          <p class="font-secondary text-3xl text-[#643B35]">Bad Luck!</p>
           <div class="flex mt-2 w-62 justify-between">
             <img
             @click="
