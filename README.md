@@ -78,7 +78,7 @@
 
 # วิธีการเล่นเกม
 
-![tutorial](https://github.com/user-attachments/assets/95315277-7db1-466c-875a-c9febb8eead1)
+![tutorial](https://github.com/user-attachments/assets/e58910c7-7098-4e09-b197-5a06dac4827f)
 
 
 --------------
