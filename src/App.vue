@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref, watchEffect, computed } from "vue";
 
 const cellLocation = ref([]);
 const board = ref([]);
@@ -130,8 +130,11 @@ watchEffect(() => {
   } else {
     showGameOverPopup.value = false;
   }
-  bombCount.value = levels[selectedLevel.value].bombCount - flaggedCells.value.length;
 });
+
+const bomb = computed(() => {
+  return levels[selectedLevel.value].bombCount - flaggedCells.value.length;
+})
 
 function clickTile(event) {
   if (gameOver.value || isPaused.value) return;
@@ -703,7 +706,7 @@ function startMusic() {
                   class="w-17"
                 />
                 <h1 class="text-7xl text-[#B2373C]" :class="'text_stroke'">
-                  {{ bombCount }}
+                  {{ bomb }}
                 </h1>
               </div>
               <div class="flex flex-row items-center space-x-5">
