@@ -24,7 +24,7 @@
 
 ✅ **054** (20%) - Graphic Design, checkWin function, getCellBackground function, backToHome function, playMusic function, startMusic function, musicControl function, edit template
 
-✅ **061** (20%) - Figma Design, getCellBackground function,  getCellNumbersSize function, getCellNumbersColor function, watchEffect , edit template
+✅ **061** (20%) - Figma Design, getCellBackground function,  getCellNumbersSize function, getCellNumbersColor function, edit template
 
 
 --------------
