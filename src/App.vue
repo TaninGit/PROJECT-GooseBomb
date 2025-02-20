@@ -2,7 +2,6 @@
 import { ref, watchEffect, computed } from "vue";
 
 const cellLocation = ref([]);
-const board = ref([]);
 const bombLocation = ref([]);
 const revealedCells = ref([]);
 const flaggedCells = ref([]);
@@ -69,21 +68,16 @@ function setBombs() {
 
 function startGame() {
   setBombs();
-  let newBoard = [];
   let newCells = [];
   timer.value = 0;
 
   for (let r = 1; r <= row.value; r++) {
-    let rowArr = [];
     for (let c = 1; c <= column.value; c++) {
       let tile = `${r}-${c}`;
-      rowArr.push(tile);
       newCells.push(tile);
     }
-    newBoard.push(rowArr);
   }
 
-  board.value = newBoard;
   cellLocation.value = newCells;
 }
 
@@ -244,7 +238,6 @@ function changeLevel(level) {
 
 function resetGame() {
   cellLocation.value = [];
-  board.value = [];
   bombLocation.value = [];
   revealedCells.value = [];
   flaggedCells.value = [];
