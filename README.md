@@ -82,7 +82,7 @@
 
 # web demo
 
-![Web demo](https://project-goosebomb.onrender.com)
+**[Web demo](https://project-goosebomb.onrender.com)**
 
 
 --------------
