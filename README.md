@@ -1,19 +1,5 @@
 # PROJECT1-SEC-1-GooseBomb
 
-## รายชื่อสมาชิก
-
-| ลำดับ | รหัสนักศึกษา   | ชื่อ-นามสกุล                 | GitHub Username | สัดส่วนเปอร์เซ็นต์การทำงาน |     สัปดาห์ที่ 1     |     สัปดาห์ที่ 2   |    สัปดาห์ที่ 3    |    สัปดาห์ที่ 4    |
-|-------|-----------------|---------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-| 1     | 66130500018     | ชนันธร ศรีวรชัย         |   mook2005      | 20% |    Figma Design  |  clickTile, checkTile function, watchEffect, edit template |  togglePause, playTime, incrementTime function, edit template  | edit template, styling tutorial popup |
-| 2     | 66130500021     | ชัญญา นิ่มถาวร         |    CNProud       | 20% | Graphic design  | setBombs, changeLevel, resetGame, edit template | add images folder, update resetGame, clickTile function, edit template | update tutorial in figma, watchEffect, checkWin function, edit template, styling win/lose popup |
-| 3     | 66130500034     | ทนิน เก้าเอี้ยน          |    TaninGit      | 20% |  Figma Design   | startGame function, edit template | add background and animation on home page | create popup template, add popup function |
-| 4     | 66130500054     | เบญญาพร เมธาวิวรรธน์กุล  |    Benyaporn54   | 20% | Graphic design  | checkWin function | update getBombBackground, getCellBackground function | add backToHome, playMusic, startMusic function, edit template |
-| 5     | 66130500061     | ปัณณพร อโนทัยสินทวี     |    Butt3rPann    | 20% | Figma Design    | getBombBackground, getCellBackground function, edit template | edit bomb count | delete getBombBackground function, add getCellNumbersSize, getCellNumbersColor function, edit & styling play game template, update bomb count |
-
-
---------------
-
-
 # การแบ่งงาน
 
 ✅ **018** (20%) - Figma Design, clickTile function, checkTile function, watchEffect, togglePause function, playTime function, incrementTime function, edit template
