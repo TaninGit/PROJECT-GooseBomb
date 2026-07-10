@@ -1,20 +1,5 @@
 # PROJECT1-SEC-1-GooseBomb
-
-# การแบ่งงาน
-
-✅ **018** (20%) - Figma Design, clickTile function, checkTile function, watchEffect, togglePause function, playTime function, incrementTime function, edit template
-
-✅ **021** (20%) - Graphic Design, Figma Design, setBombs function, changeLevel function, resetGame function, watchEffect, checkWin function, edit template
-
-✅ **034** (20%) - Figma Design, startGame function, gooseToggle function, clickPlay function, popUp function, edit template, create animation on home page
-
-✅ **054** (20%) - Graphic Design, checkWin function, getCellBackground function, backToHome function, playMusic function, startMusic function, musicControl function, edit template
-
-✅ **061** (20%) - Figma Design, getCellBackground function,  getCellNumbersSize function, getCellNumbersColor function, edit template
-
-
 --------------
-
 
 # รายละเอียด Project
 
